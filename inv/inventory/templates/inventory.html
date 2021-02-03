@@ -1,96 +1,115 @@
-{% extends "base.html" %}
+{% extends "base.html" %} {% load widget_tweaks %} {% load static %}
 
-{% load widget_tweaks %}
-
-
-{% block title %} Inventory List {% endblock title %}
-
+{% block title %} Stan magazynu {% endblock title %}
 
 {% block content %}
-    
-    <div class="row" style="color: #ea2088; font-style: bold; font-size: 3rem; ">
-        <div class="col-md-8">Inventory List</div>
-        <div class="col-md-4">               
-            <div style="float:right;"> <a class="btn ghost-blue" href="{% url 'new-stock' %}">Add New Stock</a> </div>
+<div class="container">
+
+
+    <div class="row d-flex justify-content-center align-items-center mb-4">
+        <div class="col-md-12 col-lg-5" style="color: #ea2088; font-style: bold; font-size: 3rem; ">
+            MAGAZYN
+        </div>
+        <div class="col-md-12 col-lg-5 h3">
+            <span class="badge badge-primary h3 mt-4">{{all_stock}}</span> produktów |
+            <span class="badge badge-primary h3"> 3 </span> kategorie
         </div>
     </div>
-    
-    <div style="border-bottom: 1px solid white;"></div>
-    
-    <br>
-
-    <table class="table table-css">
-
-        <form method="get">
-            <div class="input-group search">
-                {% render_field filter.form.name class="form-control textinput" placeholder="Search by stock name" %}
-                <div class="input-group-append">
-                   <button type="submit" class="btn btn-pink"> Search </button>
+    <div class="row form-row">
+        <div class="col-lg-5 col-md-12 mx-2 my-2 mb-5">
+            <form method="get">
+                <div class="input-group search" style="">
+                    {% render_field filter.form.numer_produktu style="height: 50px; font-size: 1.5rem" class="form-control textinput" placeholder="Szukaj po numerze" %}
+                    <div class="input-group-append">
+                       <button type="submit" class="btn btn-primary"><i class="fas fa-search"></i> Szukaj </button>
+                    </div>
                 </div>
-            </div>
-        </form>
-
-        <br>
-        
-        <thead class="thead-inverse align-middle">
-            <tr>
-                <th width="50%">Stock Name</th>
-                <th width="20%">Current Stock in Inventory</th>
-                <th width="30%">Options</th>
-            </tr>
-        </thead>
-                  
-{% if object_list %}
-
-        <tbody>         
-            {% for stock in object_list %}
-                <tr>
-                    <td>
-                        <h4>{{ stock.name }}</h4>
-                    </td>
-                    <td class="align-middle">{{ stock.quantity }}</td>
-                    <td class="align-middle">
-                        <a href="{% url 'edit-stock' stock.pk %}" class="btn ghost-button">Edit Details</a>
-                        <a href="{% url 'delete-stock' stock.pk %}" class="btn ghost-red"> Delete Stock </a>
-                    </td>          
-                </tr>
-            {% endfor %}                   
-        </tbody>
-
-    </table>  
-
-    <div class="align-middle">
-        {% if is_paginated %}
-
-            {% if page_obj.has_previous %}
-                <a class="btn btn-outline-info mb-4" href="?page=1">First</a>
-                <a class="btn btn-outline-info mb-4" href="?page={{ page_obj.previous_page_number }}">Previous</a>
-            {% endif %}
-
-            {% for num in page_obj.paginator.page_range %}
-                {% if page_obj.number == num %}
-                    <a class="btn btn-info mb-4" href="?page={{ num }}">{{ num }}</a>
-                {% elif num > page_obj.number|add:'-3' and num < page_obj.number|add:'3' %}
-                    <a class="btn btn-outline-info mb-4" href="?page={{ num }}">{{ num }}</a>
-                {% endif %}
-            {% endfor %}
-
-            {% if page_obj.has_next %}
-                <a class="btn btn-outline-info mb-4" href="?page={{ page_obj.next_page_number }}">Next</a>
-                <a class="btn btn-outline-info mb-4" href="?page={{ page_obj.paginator.num_pages }}">Last</a>
-            {% endif %}
-
-        {% endif %}
+            </form>
+        </div>
+        <div class="col-lg-5 col-md-12 mx-2 my-2">
+            <form method="get">
+                <div class="input-group search">
+                    {% render_field filter.form.nazwa style="height: 50px; font-size: 1.5rem" class="form-control textinput" placeholder=" Szukaj po nazwie" %}
+                    <div class="input-group-append">
+                       <button type="submit" class="btn btn-primary"> <i class="fas fa-search"></i> Szukaj </button>
+                    </div>
+                </div>
+            </form>
+        </div>
     </div>
+    <div class="col-md-12 col-lg-10  text-right mx-2 mb-3">
+        <a class="btn btn-success" href="{% url 'new-stock' %}">
+            Dodaj nowy produkt <i class="fas fa-plus"></i>
+        </a>
+    </div>
+    <div class="row d-flex justify-content-center">
+        <table class="table table-hover table-responsive text-center">
+            <thead class="thead-inverse align-middle">
+                <tr>
+                    <th>Nazwa</th>
+                    <th>Kategoria</th>
+                    <th>Ilość</th>
+                    <th>Cena</th>
+                    <th>Wartość</th>
+                    <th>Opcje</th>
 
-{% else %}
+                </tr>
+            </thead>
+            {% if object_list %}
+            <tbody>
+                {% for stock in object_list %}
+                    <tr>
+                        <td class="align-middle">
+                            <h5><a href="{% url 'edit-stock' stock.pk %}">{{ stock.nazwa }}</a></h5>
+                        </td>
+                        <td class="align-middle">
+                            {{ stock.kategoria.capitalize }}
+                        </td>
+                        <td class="align-middle">
+                            {{ stock.ilosc }}
+                        </td>
+                        <td class="align-middle">
+                            {{ stock.cena }} PLN
+                        </td>
+                        <td class="align-middle">
+                            {{ stock.wartosc }} PLN
+                        </td>
+                        <td class="align-middle">
+                            <a href="{% url 'edit-stock' stock.pk %}" class="btn my-1 btn-sm btn-warning">Edytuj <i class="fas fa-edit"></i></a>
+                            <a href="{% url 'transaction-new' stock.pk %}" class="btn my-1 btn-sm btn-success">Sprzedaj <i class="fas fa-cart-plus"></i></a>
+                            <a href="{% url 'delete-stock' stock.pk %}" class="btn my-1 btn-sm btn-danger">Skausj <i class="fas fa-minus-circle"></i></a>
 
-        <tbody></tbody>   
-    </table>
+                        </td>
+                {% endfor %}
+            </tbody>
+            {% endif %}
+        </table>
 
-    <br><br><br><br><br><br><br><br>
-    <div style="color: #ea2088; font-style: bold; font-size: 1.5rem; text-align: center;">WOW, SUCH EMPTY</div>
+        <div class="align-middle">
+            {% if is_paginated %}
 
-{% endif %}
+                {% if page_obj.has_previous %}
+                    <a class="btn btn-outline-info mb-4" href="?page=1">Pierwsza</a>
+                    <a class="btn btn-outline-info mb-4" href="?page={{ page_obj.previous_page_number }}">Poprzednia</a>
+                {% endif %}
+
+                {% for num in page_obj.paginator.page_range %}
+                    {% if page_obj.number == num %}
+                        <a class="btn btn-info mb-4" href="?page={{ num }}">{{ num }}</a>
+                    {% elif num > page_obj.number|add:'-3' and num < page_obj.number|add:'3' %}
+                        <a class="btn btn-outline-info mb-4" href="?page={{ num }}">{{ num }}</a>
+                    {% endif %}
+                {% endfor %}
+
+                {% if page_obj.has_next %}
+                    <a class="btn btn-outline-info mb-4" href="?page={{ page_obj.next_page_number }}">Następna</a>
+                    <a class="btn btn-outline-info mb-4" href="?page={{ page_obj.paginator.num_pages }}">Poprzednia</a>
+                {% endif %}
+            {% endif %}
+        </div>
+    </div>
+</div>
+
+
 
 {% endblock content %}

@@ -1,7 +1,6 @@
 from django.shortcuts import render
 from django.views.generic import View, TemplateView
-from inventory.models import Stock
-from transactions.models import SaleBill, PurchaseBill
+from transactions.models import Transakcja
 
 
 class HomeView(View):
@@ -10,17 +9,26 @@ class HomeView(View):
     def get(self, request):
         labels = []
         data = []
-        stockqueryset = Stock.objects.filter(is_deleted=False).order_by('-quantity')
-        for item in stockqueryset:
-            labels.append(item.name)
-            data.append(item.quantity)
-        sales = SaleBill.objects.order_by('-time')[:3]
-        purchases = PurchaseBill.objects.order_by('-time')[:3]
+        # stockqueryset = Stock.objects.filter(is_deleted=False).order_by('-quantity')
+        # for item in stockqueryset:
+        #     labels.append(item.name)
+        #     data.append(item.quantity)
+        # sales = SaleBill.objects.order_by('-time')[:3]
+        # purchases = PurchaseBill.objects.order_by('-time')[:3]
+
+        sprzedane = Transakcja.objects.all()
+        ilosci = {}
+        for item in sprzedane:
+            if item.produkt.nazwa in ilosci:
+                ilosci[item.produkt.nazwa] += item.ilosc
+            else:
+                ilosci[item.produkt.nazwa] = item.ilosc
+
         context = {
-            'labels': labels,
-            'data': data,
-            'sales': sales,
-            'purchases': purchases
+            'labels': [x for x in ilosci],
+            'data': [v for k, v in ilosci.items()],
+            # 'sales': sales,
+            # 'purchases': purchases
             }
         return render(request, self.template_name, context)
 

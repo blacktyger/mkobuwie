@@ -1,44 +1,57 @@
-{% extends "base.html" %}
-
+{% extends "base.html" %} {% load crispy_forms_tags %}
 
 {% block title %} {{title}} {% endblock title %}
 
-
 {% block content %}
-
-    <div style="color:#ea2088; font-style: bold; font-size: 3rem; border-bottom: 1px solid white;">{{title}}</div> 
     
-    <br>
-    
-    <form method="post">
-    
-        {% csrf_token %}
-        {{ form.non_field_errors }}
-        
-        <div class="form-group">
-            {{ form.name.errors }}
-            <label for="{{ form.name.id_for_label }}">Name:</label>
-            {{ form.name }}
-        </div>
-        <div class="form-group ">
-            {{ form.quantity.errors }}
-            <label for="{{ form.quantity.id_for_label }}">Quantity:</label>
-            {{ form.quantity }}
-        </div>
-
-        <br>
-
-        <div class="align-middle">
-            <button type="submit" class="btn ghost-green">{{ savebtn }}</button>
-            {% if title == "New Stock" %}
-                <button type="reset" class="btn ghost-blue" >Reset</button>
-            {% endif %}
-            {% if delbtn %}
-                <a href="{% url 'delete-stock' object.pk %}" class="btn ghost-red"> Delete Stock </a>
-            {% endif %}
-            <a href="{% url 'inventory' %}" class="btn ghost-button">Cancel</a>
-        </div>
-        
-    </form>
+    <div class="container">
+        <form method="POST">
+                    {% csrf_token %}
+            {{ form.non_field_errors }}
+            <div class="row d-flex justify-content-center">
+                <div class="col-md-12 col-lg-6 align-middle">
+                    <div style="color:#ea2088; font-style: bold; font-size: 3rem;"
+                            class="mb-5 mt-3">
+                        {{title}}
+                    </div>
+                    <table class="table table-hover">
+                        <tbody>
+                            <tr>
+                                <td scope="col">Nazwa</td>
+                                <td>{{ form.nazwa }}</td>
+                            </tr>
+                            <tr>
+                                <td scope="col">Kategoria</td>
+                                <td>{{ form.kategoria }}</td>
+                            </tr>
+                            <tr>
+                                <td scope="col">Ilość</td>
+                                <td>{{ form.ilosc }}</td>
+                            </tr>
+                            <tr>
+                                <td scope="col">Cena jednostokowa</td>
+                                <td>{{ form.cena }}</td>
+                            </tr>
+                        </tbody>
+                    </table>
+                    <div class="row d-flex align-self-center">
+                        <label for="form.informacje.name">Dodatkowe informacje o produkcie</label>
+                        {{form.informacje}}
+                    </div>
+                    <div class="row d-flex justify-content-end mr-2 mt-5">
+                        <button type="submit" class="btn form-control col-5 btn-success mx-2">Zapisz</button>
+                        {% if title == "Nowy produkt" %}
+                            <button type="reset" class="btn btn-warning mx-2" >Wyczyść</button>
+                        {% endif %}
+                        {% if delbtn %}
+                             <a href="{% url 'transaction-new' object.pk %}" class="btn btn-success">Sprzedaj</a>
+                            <a href="{% url 'delete-stock' object.pk %}" class="btn btn-danger">Usuń Produkt</a>
+                        {% endif %}
+                        <a href="{% url 'inventory' %}" class="btn btn-primary mx-2">Wróć</a>
+                    </div>
+                </div>
+            </div>
+        </form>
+    </div>
 
 {% endblock content %}

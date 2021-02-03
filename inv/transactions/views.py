@@ -1,10 +1,16 @@
+import datetime
+from decimal import Decimal as d
+from django.contrib.auth.models import User
+from django.http import HttpResponseRedirect, HttpResponse
 from django.shortcuts import render, redirect, get_object_or_404
+from django.template import RequestContext
+from django.utils import timezone
 from django.views.generic import (
     View,
     ListView,
     CreateView,
     UpdateView,
-    DeleteView
+    DeleteView, DetailView
     )
 from django.contrib.messages.views import SuccessMessageMixin
 from django.contrib import messages
@@ -16,7 +22,7 @@ from .models import (
     PurchaseBillDetails,
     SaleBill,
     SaleItem,
-    SaleBillDetails
+    SaleBillDetails, Rachunek
     )
 from .forms import (
     SelectSupplierForm,
@@ -25,9 +31,82 @@ from .forms import (
     SupplierForm,
     SaleForm,
     SaleItemFormset,
-    SaleDetailsForm
+    SaleDetailsForm,
+    TransakcjaForm, TransakcjaFormset
     )
 from inventory.models import Stock
+from .models import Transakcja
+
+
+class TransakcjaView(SuccessMessageMixin, ListView):
+    model = Transakcja
+    form_class = TransakcjaForm
+    context_object_name = 'rachunki'
+    template_name = "sales/sales_list.html"
+    ordering = ['-czas']
+    paginate_by = 50
+
+
+class TransakcjaDetailView(SuccessMessageMixin, View):
+    model = Transakcja
+    form_class = TransakcjaForm
+    template_name = "sales/new_sale.html"
+
+    def get(self, request, pk):
+        now = datetime.datetime.now()
+        numer_produktu = pk
+
+        if Stock.objects.filter(numer_produktu=numer_produktu).exists():
+            produkt = Stock.objects.get(numer_produktu=pk)
+            initials = {
+                'produkt': produkt,
+                'cena': produkt.cena,
+                'ilosc': 1,
+                }
+            form = TransakcjaForm(initial=initials)
+
+        else:
+            messages.warning(request, message='NIE ZNALEZIONO PRODUKTU')
+            return redirect('inventory')
+
+        context = {
+            'now': now,
+            'produkt': produkt,
+            'form': form,
+            'x': [x.value() for x in form]
+            }
+
+        return render(request, 'sales/new_sale.html', context)
+
+    def post(self, request, *args, **kwargs):
+        form = TransakcjaForm(request.POST)
+        form.save(commit=False)
+        if form.is_valid():
+            produkt = form.cleaned_data['produkt']
+            data = form.cleaned_data
+            print(data)
+
+            data['czas'] = timezone.now()
+            data['wartosc'] = d(data['ilosc']) * d(data['cena'])
+            data['vat_wartosc'] = d(data['vat_procent']) / 100 * d(data['wartosc'])
+
+            this = Transakcja(**data)
+            print(data)
+
+            if this.update_stock():
+                this.save()
+                print(f"SAVED {this}")
+                messages.success(request, f"UDANA SPRZEDAŻ {produkt.nazwa}")
+                messages.success(request, f"SPRZEDANO {data['ilosc']} SZTUK ZA {data['wartosc']} PLN")
+                return redirect('home')
+            else:
+                messages.warning(request, f"SPRZEDAŻ NIE UDANA {produkt.nazwa}")
+                messages.warning(request, f"ZLECENIE NA {data['ilosc']} SZT | STAN MAGAZYNU {produkt.ilosc }")
+                return redirect('edit-stock', pk=produkt.numer_produktu)
+
+        else:
+            messages.warning(request, f"NIE UDAŁO SPRZEDAĆ")
+            return redirect('edit-stock', pk=kwargs['pk'])
 
 
 # shows a lists of all suppliers
@@ -35,7 +114,7 @@ class SupplierListView(ListView):
     model = Supplier
     template_name = "suppliers/suppliers_list.html"
     queryset = Supplier.objects.filter(is_deleted=False)
-    paginate_by = 10
+    paginate_by = 50
 
 
 # used to add a new supplier
@@ -92,7 +171,7 @@ class SupplierView(View):
         supplierobj = get_object_or_404(Supplier, name=name)
         bill_list = PurchaseBill.objects.filter(supplier=supplierobj)
         page = request.GET.get('page', 1)
-        paginator = Paginator(bill_list, 10)
+        paginator = Paginator(bill_list, 50)
         try:
             bills = paginator.page(page)
         except PageNotAnInteger:
@@ -112,7 +191,7 @@ class PurchaseView(ListView):
     template_name = "purchases/purchases_list.html"
     context_object_name = 'bills'
     ordering = ['-time']
-    paginate_by = 10
+    paginate_by = 50
 
 
 # used to select the supplier
@@ -204,7 +283,7 @@ class SaleView(ListView):
     template_name = "sales/sales_list.html"
     context_object_name = 'bills'
     ordering = ['-time']
-    paginate_by = 10
+    paginate_by = 50
 
 
 # used to generate a bill object and save items

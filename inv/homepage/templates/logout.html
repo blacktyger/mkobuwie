@@ -22,22 +22,14 @@
 
 </head>
 
-<body>
-
-    <div class="align-middle" style="color: #ea2088; font-style: bold; font-size: 3rem;">Invi</div>
-    <div class="align-middle" style="color: #fff">An Inventory Management System</div>
-    <br><br><br>
-
-    <div class="row d-flex justify-content-center">
+<body style="background-color: #80b8c2">
+    <div class="row d-flex justify-content-center mt-5">
         <div class="col-md-6">
         
-            <h2 class="align-middle">You have been logged out! Thank you for using Invi</h2>
+            <h2 class="align-middle">Zostałeś/aś wylogowany</h2>
             <div class="border-top pt-3 align-middle">
-                <a href="{% url 'login' %}"><button class="ml-2 ghost-pink">Log In Again</button></a> <br><br>
-                {# <button class="ml-2 ghost-red">Exit</button> #}
+                <a href="{% url 'login' %}"><button class="ml-2 btn-primary">Zaloguj ponownie</button></a> <br><br>
             </div>
-    
-            <div class="align-middle"> <a href="{% url 'about' %}">About</a> </div>
 
         </div>
     </div>

@@ -1,0 +1,75 @@
+{% extends "base.html" %} {% load crispy_forms_tags %} {% block title %} {{ title }} {% endblock title %}
+
+{% block content %}
+
+<body>
+    <div class="container">
+        <form method="POST">
+            {% csrf_token %}
+            {{ form.non_field_errors }}
+            <div class="row d-flex justify-content-center">
+                <div class="col-md-12 col-lg-6 align-middle">
+                    <div style="color:#ea2088; font-style: bold; font-size: 3rem;"
+                            class="mb-5 mt-3">
+                        {{title}}
+                    </div>
+                    <div class="col-md-12 col-lg-12 align-middle my-5">
+                        <a href="{% url 'transaction-new' produkt.numer_produktu %}"
+                           class="btn btn-block btn-success mx-2">SPRZEDAJ</a>
+                    </div>
+
+                    <table class="table table-hover">
+                        <tbody>
+                            <tr>
+                                <td scope="col">Nazwa</td>
+                                <td>{{ form.nazwa }}</td>
+                            </tr>
+                            <tr>
+                                <td scope="col">Kategoria</td>
+                                <td>{{ form.kategoria }}</td>
+                            </tr>
+                            <tr>
+                                <td scope="col">Ilość</td>
+                                <td>{{ form.ilosc }}</td>
+                            </tr>
+                            <tr>
+                                <td scope="col">Cena jednostokowa</td>
+                                <td>{{ form.cena }}</td>
+                            </tr>
+                            <tr>
+                                <td scope="col">Wartość całkowita</td>
+                                <td>{{ produkt.wartosc }} PLN</td>
+                            </tr>
+                            <tr>
+                                <td scope="col">Numer produktu</td>
+                                <td>{{ produkt.numer_produktu }}</td>
+                            </tr>
+                        </tbody>
+                    </table>
+                    <div class="row d-flex justify-content-end mr-2 mt-5">
+                        <button type="submit" class="btn form-control col-6 btn-success mx-2">Potwierdź zmiany</button>
+                            {% if title == "Nowy produkt" %}
+                                <button type="reset" class="btn btn-warning mx-2" >Wyczyść</button>
+                            {% endif %}
+                            {% if delbtn %}
+                                <a href="{% url 'delete-stock' object.pk %}" class="btn btn-danger">Usuń Produkt</a>
+                            {% endif %}
+                        <a href="{% url 'inventory' %}" class="btn btn-primary mx-2">Wróć</a>
+                    </div>
+                </div>
+                <div class="col-md-12 col-lg-4 my-5 text-center">
+                    Produkt BARCODE (EAN8)
+                    <img src="{{produkt.barcode.url}}" class="img align-self-center mr-3 mt-2" alt="barcode"
+                                 style="max-width: 250px">
+                    <div class=" mt-3">
+                        <label for="form.informacje.name">Dodatkowe informacje o produkcie</label>
+                        {{form.informacje}}
+                    </div>
+                </div>
+
+            </div>
+        </form>
+    </div>
+</body>
+
+{% endblock content %}

@@ -1,7 +1,62 @@
 from random import random
-
+from decimal import Decimal as d
+from django.contrib.auth.models import User
 from django.db import models
+from django.utils import timezone
 from inventory.models import Stock
+
+VAT = [('0', 0), ('8', 8), ('19', 19), ('21', 21)]
+
+
+class Rachunek(models.Model):
+    time = models.DateTimeField(default=timezone.now, blank=True)
+    cena = models.FloatField(default=1)
+    produkt = models.ForeignKey(Stock, on_delete=models.CASCADE)
+
+
+class Transakcja(models.Model):
+    czas = models.DateTimeField(default=timezone.now, blank=True)
+    cena = models.DecimalField(default=1, decimal_places=2, max_digits=8)
+    ilosc = models.IntegerField(default=1)
+    rabat = models.DecimalField(default=0, blank=True, null=True, decimal_places=2, max_digits=8)
+    uwagi = models.TextField(default=1, blank=True, null=True)
+    wartosc = models.DecimalField(default=1, blank=True, null=True, decimal_places=2, max_digits=8)
+    vat_procent = models.CharField(choices=VAT, max_length=64, default=VAT[0])
+    vat_wartosc = models.DecimalField(default=0, blank=True, null=True, decimal_places=2, max_digits=8)
+    produkt = models.ForeignKey(Stock, blank=True, on_delete=models.CASCADE)
+
+    def check_sell(self):
+        if self.produkt.ilosc < self.ilosc:
+            print(f"ZA MALO ({self.produkt.ilosc}szt) {self.produkt.nazwa} NA STANIE!")
+            return False
+        else:
+            return True
+
+    def update_stock(self):
+        if self.check_sell():
+            print(f"MAGAZYN:{self.produkt.ilosc} MINUS ZAKUP :{self.ilosc}")
+            self.produkt.ilosc = self.produkt.ilosc - self.ilosc
+            if self.produkt.ilosc < 0:
+                print(f"({self.produkt.ilosc}szt) {self.produkt.nazwa} NA STANIE - COS NIE TAK")
+                return False
+            else:
+                print(f"{self.produkt.ilosc} SZTUK {self.produkt.nazwa} - MAGAZYN UAKTUALNIONY")
+                self.produkt.save()
+                return True
+
+    def save(self, *args, **kwargs):
+        # if self.rabat:
+        #     self.cena = d(self.cena * (self.rabat / 100))
+
+        self.wartosc = d(self.ilosc * self.cena)
+        #
+        # if self.vat_procent:
+        #     self.vat_wartosc = self.wartosc * d(d(self.vat_procent) / 100)
+
+        return super().save(*args, **kwargs)
+
+    def __str__(self):
+        return f"Sprzedaż z dnia {self.czas}"
 
 
 # contains suppliers
@@ -97,14 +152,21 @@ class SaleBill(models.Model):
 
 # contains the sale stocks made
 class SaleItem(models.Model):
-    billno = models.ForeignKey(SaleBill, on_delete=models.CASCADE, related_name='salebillno')
+    data = models.DateTimeField(auto_now=True)
+    cena = models.FloatField(default=1)
+    ilosc = models.IntegerField(default=1)
+    rabat = models.FloatField(default=1)
+    uwagi = models.TextField(default=1)
     stock = models.ForeignKey(Stock, on_delete=models.CASCADE, related_name='saleitem')
+    sprzedawca = models.ForeignKey(User, default=0, on_delete=models.CASCADE)
+
+    billno = models.ForeignKey(SaleBill, on_delete=models.CASCADE, related_name='salebillno')
     quantity = models.IntegerField(default=1)
     perprice = models.IntegerField(default=1)
     totalprice = models.IntegerField(default=1)
 
     def __str__(self):
-        return "Bill no: " + str(self.billno.billno) + ", Item = " + self.stock.name
+        return f"Sprzedaż z dnia {self.data} przez {str(self.sprzedawca).capitalize()}"
 
 
 # contains the other details in the sales bill

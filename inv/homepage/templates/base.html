@@ -16,12 +16,36 @@
     <link rel="stylesheet" type="text/css" href="{% static 'css/main.css' %}">    
     <link rel="stylesheet" type="text/css" href="{% static 'css/sidebar.css' %}">    
     <link rel="stylesheet" type="text/css" href="{% static 'css/dialogbox.css' %}">    
-
-    <title>Invi - {% block title %}Title Missing{% endblock title %}</title>
+    <script src="https://kit.fontawesome.com/a04fbceb93.js" crossorigin="anonymous"></script>
+    <title>MK Obuwie - {% block title %}{% endblock title %}</title>
 
 </head>
+<style>
+    @media only screen and (max-width: 1024px) {
+        .hide-xs-md {
+            display: none;
+        }
+        #sidebar {
+            display: none;
+        }
+    }
 
-<body>
+    @media only screen and (max-width: 768px) {
+    .hide-xs {
+        display: none;
+    }}
+
+    @media only screen and (min-width: 1024px) {
+    .hide-lg {
+        display: none;
+    }}
+
+    .btn {
+        font-size: 1.2rem;
+    }
+
+</style>
+<body style="background-image: linear-gradient(to left top, #dadada, #d3d4df, #c8d0e5, #b7cceb, #a1caf0);">
 
     <!-- Dialog Box CSS  -->
     <div id="dialogoverlay"></div>
@@ -32,6 +56,50 @@
             <div id="dialogboxfoot"></div>
         </div>
     </div>
+    <nav id="mobile-nav" class=" hide-lg navbar navbar-expand-lg navbar-dark bg-dark">
+        <a class="navbar-brand" href="{% url 'home' %}">MK Obuwie</a>
+        <button class="navbar-toggler" type="button" data-toggle="collapse"
+            data-target="#navbarTogglerDemo02" aria-controls="navbarTogglerDemo02"
+            aria-expanded="false" aria-label="Toggle navigation">
+            <span class="navbar-toggler-icon"></span>
+        </button>
+        <div class="collapse navbar-collapse" id="navbarTogglerDemo02">
+            <ul class="navbar-nav mr-auto mt-2 mt-lg-0">
+                <li class="nav-item active">
+                    <a class="nav-link text-primary" href="{% url 'home' %}"><h3>Strona główna</h3></a>
+                </li>
+                <li class="nav-item">
+                    <div class="dropdown">
+                        <a class="dropdown-toggle text-light" type="button" id="dropdownMenuButton"
+                           data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+                            <h3>Magazyn</h3>
+                        </a>
+                        <div class="dropdown-menu" aria-labelledby="dropdownMenuButton">
+                            <a class="dropdown-item h4" href="{% url 'inventory' %}">Lista produktów</a>
+                            <a class="dropdown-item h4" href="{% url 'new-stock' %}">Dodaj produkt</a>
+                        </div>
+                    </div>
+                </li>
+                <li class="nav-item">
+                    <div class="dropdown">
+                        <a class="dropdown-toggle text-light" type="button" id="dropdownMenuButton1"
+                           data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+                            <h3>Sprzedaż</h3>
+                        </a>
+                        <div class="dropdown-menu" aria-labelledby="dropdownMenuButton">
+                            <a class="dropdown-item h4" href="{% url 'transactions-list' %}">Historia sprzedaży</a>
+                        </div>
+                    </div>
+                </li>
+                <li>
+                    {% if request.user.is_superuser %}
+                        <a class="nav-link" href="{% url 'admin:index' %}">Panel administracyjny</a>
+                    {% endif %}
+                        <a class="nav-link text-warning" href="{% url 'logout' %}">Wyloguj</a>
+                </li>
+            </ul>
+        </div>
+    </nav>
 
     <main id="wrapper">
     
@@ -40,53 +108,33 @@
         <nav id="sidebar">
             
             <div class="sidebar-header">
-                <a class="navbar-brand titlefont mr-4" href="{% url 'home' %}"><h3>Invi</h3></a>
+                <a class="navbar-brand titlefont mr-4" href="{% url 'home' %}"><h3>MK Obuwie</h3></a>
             </div>
 
             <ul class="list-unstyled sidebar-components">
-                {# <p class="sidebar-paragraph">Dummy Heading</p> #}
                 <li>
-                    <a class="sidebar-text sidebar-button" href="{% url 'home' %}">Home</a>
+                    <a class="sidebar-text sidebar-button" href="{% url 'home' %}">Strona główna</a>
                 </li>               
                 <li>
-                    <a href="#inventorySubmenu" data-toggle="collapse" class="dropdown-toggle sidebar-text right-arrow sidebar-button">Inventory</a>
+                    <a href="#inventorySubmenu" data-toggle="collapse" class="dropdown-toggle sidebar-text right-arrow sidebar-button">Magazyn</a>
                     <ul class="collapse list-unstyled" id="inventorySubmenu">
-                        <li> <a class="sidebar-text sidebar-subitem sidebar-button" href="{% url 'inventory' %}">Inventory List</a> </li>
-                        <li> <a class="sidebar-text sidebar-subitem sidebar-button" href="{% url 'new-stock' %}">Add New Stock</a> </li>
+                        <li> <a class="sidebar-text sidebar-subitem sidebar-button" href="{% url 'inventory' %}">Lista produktów</a> </li>
+                        <li> <a class="sidebar-text sidebar-subitem sidebar-button" href="{% url 'new-stock' %}">Dodaj nowy produkt</a> </li>
                     </ul>
                 </li>
                 <li>
-                    <a href="#purchaseSubmenu" data-toggle="collapse" class="dropdown-toggle sidebar-text right-arrow sidebar-button">Purchases</a>
-                    <ul class="collapse list-unstyled" id="purchaseSubmenu">
-                        <li> <a class="sidebar-text sidebar-subitem sidebar-button" href="{% url 'purchases-list' %}">Purchases List</a> </li>
-                        <li> <a class="sidebar-text sidebar-subitem sidebar-button" href="{% url 'select-supplier' %}">New Incoming Stock</a> </li>
-                    </ul>
-                </li>
-                <li>
-                    <a href="#saleSubmenu" data-toggle="collapse" class="dropdown-toggle sidebar-text right-arrow sidebar-button">Sales</a>
+                    <a href="#saleSubmenu" data-toggle="collapse" class="dropdown-toggle sidebar-text right-arrow sidebar-button">Sprzedaż</a>
                     <ul class="collapse list-unstyled" id="saleSubmenu">
-                        <li> <a class="sidebar-text sidebar-subitem sidebar-button" href="{% url 'sales-list' %}">Sales Orders</a> </li>
-                        <li> <a class="sidebar-text sidebar-subitem sidebar-button" href="{% url 'new-sale' %}">New Outgoing Stock</a> </li>
+                        <li> <a class="sidebar-text sidebar-subitem sidebar-button" href="{% url 'transactions-list' %}">Historia sprzedaży</a> </li>
                     </ul>
                 </li>
                 <li>
-                    <a href="#supplierSubmenu" data-toggle="collapse" class="dropdown-toggle sidebar-text right-arrow sidebar-button">Suppliers</a>
-                    <ul class="collapse list-unstyled" id="supplierSubmenu">
-                        <li> <a class="sidebar-text sidebar-subitem sidebar-button" href="{% url 'suppliers-list' %}">Suppliers List</a> </li>
-                        <li> <a class="sidebar-text sidebar-subitem sidebar-button" href="{% url 'new-supplier' %}">Add New Supplier</a> </li>
-                    </ul>
-                </li>
-                <li>
-                    <a class="sidebar-text sidebar-button" href="{% url 'about' %}">About</a>
-                </li>
-
-                <li class="bottomleft">
                     <a href="#UserSubmenu" data-toggle="collapse" class="dropdown-toggle sidebar-text right-arrow sidebar-button">{{ request.user.username }}</a>
                     <ul class="collapse list-unstyled" id="UserSubmenu">
                         {% if request.user.is_superuser %}
-                            <li> <a class="sidebar-text sidebar-subitem sidebar-button" href="{% url 'admin:index' %}">Admin Page</a> </li>
+                            <li> <a class="sidebar-text sidebar-subitem sidebar-button" href="{% url 'admin:index' %}">Panel administracyjny</a> </li>
                         {% endif %}
-                            <li> <a class="sidebar-text sidebar-subitem sidebar-button" href="{% url 'logout' %}">Logout</a> </li>
+                            <li> <a class="sidebar-text sidebar-subitem sidebar-button" href="{% url 'logout' %}">Wyloguj</a> </li>
                     </ul>
                 </li>
 
@@ -105,30 +153,25 @@
         </nav>
     
         <div id="content">
-
-            <div class="row">
-                <div class="col-md-12">
-                
+            <div class="row d-flex justify-content-center">
+                <div class="col-md-8">
                     {% if messages %}
                         {% for message in messages %}
-                            <div class="alert alert-{{ message.tags }}"> {{ message }} </div>
+                            <div class="h3 alert alert-{{ message.tags }}"> {{ message }} </div>
                         {% endfor %}
                     {% endif %}
-                
-    {% endif %} 
-
-                    <div class="container">
-                        {% block content %}{% endblock content %}
-                    </div>
-                    
                 </div>
             </div>
-            <br>
-
+    {% endif %}
+            <div class="container">
+                {% block content %}
+                {% endblock content %}
+            </div>
         </div>
+    </main>
+</body>
     
-    </main>    
-        
+
     <!-- jQuery first, then Popper.js, then Bootstrap JS -->
     <script src="{% static 'bootstrap/jquery-3.3.1.slim.min.js' %}"></script>
     <script src="{% static 'bootstrap/popper.min.js' %}"></script>
