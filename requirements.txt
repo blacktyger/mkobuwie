@@ -1,4 +1,4 @@
-django-barcode
+python-barcode
 asgiref
 astroid
 certifi==2020.12.5
@@ -7,7 +7,7 @@ chardet==4.0.0
 colorama
 cryptography==3.3.1
 defusedxml==0.6.0
-Django==
+Django
 django-allauth
 django-countries
 django-crispy-forms

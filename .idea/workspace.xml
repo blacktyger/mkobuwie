@@ -3,18 +3,7 @@
   <component name="ChangeListManager">
     <list default="true" id="e88f2c15-1a42-40f4-80e8-0278c1d9a0bf" name="Default Changelist" comment="">
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/core/settings.py" beforeDir="false" afterPath="$PROJECT_DIR$/core/settings.py" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/static/bootstrap/bootstrap.min.css" beforeDir="false" afterPath="$PROJECT_DIR$/homepage/static/bootstrap/bootstrap.min.css" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/static/bootstrap/bootstrap.min.js" beforeDir="false" afterPath="$PROJECT_DIR$/homepage/static/bootstrap/bootstrap.min.js" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/static/bootstrap/jquery-3.3.1.slim.min.js" beforeDir="false" afterPath="$PROJECT_DIR$/homepage/static/bootstrap/jquery-3.3.1.slim.min.js" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/static/bootstrap/popper.min.js" beforeDir="false" afterPath="$PROJECT_DIR$/homepage/static/bootstrap/popper.min.js" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/static/css/bill.css" beforeDir="false" afterPath="$PROJECT_DIR$/homepage/static/css/bill.css" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/static/css/dialogbox.css" beforeDir="false" afterPath="$PROJECT_DIR$/homepage/static/css/dialogbox.css" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/static/css/main.css" beforeDir="false" afterPath="$PROJECT_DIR$/homepage/static/css/main.css" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/static/css/sidebar.css" beforeDir="false" afterPath="$PROJECT_DIR$/homepage/static/css/sidebar.css" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/static/js/Chart.min.js" beforeDir="false" afterPath="$PROJECT_DIR$/homepage/static/js/Chart.min.js" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/static/js/dialogbox.js" beforeDir="false" afterPath="$PROJECT_DIR$/homepage/static/js/dialogbox.js" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/static/js/jquery-3.2.1.slim.min.js" beforeDir="false" afterPath="$PROJECT_DIR$/homepage/static/js/jquery-3.2.1.slim.min.js" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/requirements.txt" beforeDir="false" afterPath="$PROJECT_DIR$/requirements.txt" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
@@ -45,14 +34,15 @@
     <property name="settings.editor.selected.configurable" value="com.jetbrains.python.configuration.PyActiveSdkModuleConfigurable" />
   </component>
   <component name="RecentsManager">
-    <key name="MoveFile.RECENT_KEYS">
-      <recent name="C:\mk-obuwie" />
-      <recent name="C:\mk-obuwie\inv" />
-    </key>
     <key name="CopyFile.RECENT_KEYS">
       <recent name="C:\mk-obuwie\inv\staticfiles" />
       <recent name="C:\mk-obuwie\inv" />
       <recent name="C:\mk-obuwie\inv\inventory\templates" />
+    </key>
+    <key name="MoveFile.RECENT_KEYS">
+      <recent name="C:\mk-obuwie\homepage" />
+      <recent name="C:\mk-obuwie" />
+      <recent name="C:\mk-obuwie\inv" />
     </key>
   </component>
   <component name="SvnConfiguration">
