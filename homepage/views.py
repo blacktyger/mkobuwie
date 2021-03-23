@@ -15,9 +15,10 @@ class HomeView(View):
             else:
                 ilosci[item.produkt.nazwa] = item.ilosc
 
+        ilosci = sorted(ilosci.items(), key=lambda x: x[1], reverse=True)[:30]
         context = {
-            'labels': [x for x in ilosci],
-            'data': [v for k, v in ilosci.items()],
+            'labels': [x[0] for x in ilosci],
+            'data': [x[1] for x in ilosci],
             }
         return render(request, self.template_name, context)
 

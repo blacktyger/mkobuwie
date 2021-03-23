@@ -10,7 +10,15 @@ from django.db import models
 
 from inventory.items import items
 
-KATEGORIE = [('obuwie', 'obuwie'), ('damskie', 'damskie'), ('dzieciece', 'dzieciece')]
+KATEGORIE = [('obuwie-damskie', 'obuwie-damskie'),
+             ('obuwie-meskie', 'obuwie-meskie'),
+             ('obuwie-dzieciece', 'obuwie-dzieciece'),
+             ('odziez', 'odziez'),
+             ('dodatki', 'dodatki'),
+             ('torebki', 'torebki'),
+             ('bielizna', 'bielizna'),
+             ('inne', 'inne')
+             ]
 
 
 def create_product_code(kategoria):
@@ -51,6 +59,9 @@ class Stock(models.Model):
     informacje = models.TextField(blank=True, null=True)
     barcode = models.ImageField(upload_to='barcodes/', blank=True, null=True, default="")
 
+    class Meta:
+        ordering = ['nazwa']
+
     def save(self, *args, **kwargs):
         self.wartosc = d(self.ilosc * self.cena)
         self.name = self.nazwa
@@ -59,7 +70,6 @@ class Stock(models.Model):
 
             EAN = barcode.get_barcode_class('ean8')
             ean = EAN(f'{create_product_code(self.kategoria)}', writer=ImageWriter())
-
             self.numer_produktu = int(str(ean))
             self.pk = self.numer_produktu
             print(self.pk)
@@ -74,10 +84,21 @@ class Stock(models.Model):
     def get_absolute_url(self):
         return f"/inventory/stock/{self.numer_produktu}/edit"
 
+    @classmethod
+    def repair_name(cls):
+        """ Get rid of extra signs in names"""
+        znaki = ('"', '!', "'", "?")
+        for item in cls.objects.all():
+            if item.nazwa.startswith(znaki):
+                for znak in znaki:
+                    item.nazwa = item.nazwa.replace(znak, '')
+                    item.save()
+
     def __str__(self):
         return f"[{self.kategoria.upper()}] {self.nazwa}"
 
 
+# TEST UNIT
 def add_stock():
     for x in items:
         try:

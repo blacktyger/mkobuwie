@@ -43,6 +43,19 @@ class TransakcjaView(SuccessMessageMixin, ListView):
     ordering = ['-czas']
     paginate_by = 50
 
+    def get_context_data(self, *args, **kwargs):
+        context = super(TransakcjaView, self).get_context_data(**kwargs)
+        today = datetime.date.today()
+        tygodniowa = today - datetime.timedelta(days=7)
+
+        sprzedaz_dzienna = self.model.objects.filter(czas__gte=today)
+        sprzedaz_tygodniowa = self.model.objects.filter(czas__gte=tygodniowa)
+
+        context['sprzedaz_dzienna'] = sum([tx.wartosc for tx in sprzedaz_dzienna])
+        context['sprzedaz_tygodniowa'] = sum([tx.wartosc for tx in sprzedaz_tygodniowa])
+
+        return context
+
 
 class TransakcjaDetailView(SuccessMessageMixin, View):
     model = Transakcja

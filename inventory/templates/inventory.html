@@ -1,20 +1,20 @@
-{% extends "base.html" %} {% load widget_tweaks %} {% load static %}
+{% extends "base.html" %} {% load widget_tweaks %} {% load static %} {% load tags %}
 
 {% block title %} Stan magazynu {% endblock title %}
 
 {% block content %}
 <div class="container">
 
-
     <div class="row d-flex justify-content-center align-items-center mb-4">
         <div class="col-md-12 col-lg-5" style="color: #ea2088; font-style: bold; font-size: 3rem; ">
             MAGAZYN
         </div>
-        <div class="col-md-12 col-lg-5 h3">
+        <div class="col-md-12 col-lg-5 h2">
             <span class="badge badge-primary h3 mt-4">{{all_stock}}</span> produktów |
-            <span class="badge badge-primary h3"> 3 </span> kategorie
+            <span class="badge badge-primary h3"> {{all_kategorie}} </span> kategorie
         </div>
     </div>
+
     <div class="row form-row">
         <div class="col-lg-5 col-md-12 mx-2 my-2 mb-5">
             <form method="get">
@@ -26,6 +26,7 @@
                 </div>
             </form>
         </div>
+
         <div class="col-lg-5 col-md-12 mx-2 my-2">
             <form method="get">
                 <div class="input-group search">
@@ -37,11 +38,19 @@
             </form>
         </div>
     </div>
-    <div class="col-md-12 col-lg-10  text-right mx-2 mb-3">
-        <a class="btn btn-success" href="{% url 'new-stock' %}">
-            Dodaj nowy produkt <i class="fas fa-plus"></i>
+
+    <div class="col-lg-11 col-md-12 text-right mx-2 mb-3">
+        <a class="btn btn-success my-1 mx-2" href="{% url 'new-stock' %}">
+            <i class="fas fa-plus"></i> Dodaj nowy produkt
         </a>
+
+        <a href="{% url 'csv' %}"> <button class="my-1 mx-2 btn btn-primary">
+            <i class="fas fa-print"></i>
+           Drukuj <span class="badge badge-light">{{request.session.qs|length}}</span>
+            pozycji
+        </button></a>
     </div>
+
     <div class="row d-flex justify-content-center">
         <table class="table table-hover table-responsive text-center">
             <thead class="thead-inverse align-middle">
@@ -89,21 +98,21 @@
             {% if is_paginated %}
 
                 {% if page_obj.has_previous %}
-                    <a class="btn btn-outline-info mb-4" href="?page=1">Pierwsza</a>
-                    <a class="btn btn-outline-info mb-4" href="?page={{ page_obj.previous_page_number }}">Poprzednia</a>
+                    <a class="btn btn-outline-info mb-4" href="?{% url_replace page=1 %}">Pierwsza</a>
+                    <a class="btn btn-outline-info mb-4" href="?{% url_replace page=page_obj.previous_page_number %}">Poprzednia</a>
                 {% endif %}
 
                 {% for num in page_obj.paginator.page_range %}
                     {% if page_obj.number == num %}
-                        <a class="btn btn-info mb-4" href="?page={{ num }}">{{ num }}</a>
+                        <a class="btn btn-info mb-4" href="?{% url_replace page=num %}">{{ num }}</a>
                     {% elif num > page_obj.number|add:'-3' and num < page_obj.number|add:'3' %}
-                        <a class="btn btn-outline-info mb-4" href="?page={{ num }}">{{ num }}</a>
+                        <a class="btn btn-outline-info mb-4" href="?{% url_replace page=num %}">{{ num }}</a>
                     {% endif %}
                 {% endfor %}
 
                 {% if page_obj.has_next %}
-                    <a class="btn btn-outline-info mb-4" href="?page={{ page_obj.next_page_number }}">Następna</a>
-                    <a class="btn btn-outline-info mb-4" href="?page={{ page_obj.paginator.num_pages }}">Poprzednia</a>
+                    <a class="btn btn-outline-info mb-4" href="?{% url_replace page=page_obj.next_page_number %}">Następna</a>
+                    <a class="btn btn-outline-info mb-4" href="?{% url_replace page=page_obj.paginator.num_pages %}">Poprzednia</a>
                 {% endif %}
             {% endif %}
         </div>

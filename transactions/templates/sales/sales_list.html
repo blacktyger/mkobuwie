@@ -9,6 +9,13 @@
 {% block content %}
 
 <div class="container">
+    <div class="row d-flex justify-content-center align-items-center mb-4">
+        <div class="col-md-12 col-lg-12 h2">
+            OBRÓT DZIENNY: <span class="badge badge-primary h2 mt-4">{{sprzedaz_dzienna}} zł</span>  <br>
+            OBRÓT TYGODNIOWY: <span class="badge badge-primary h2">{{sprzedaz_tygodniowa}} zł </span>
+        </div>
+    </div>
+
     <div class="row" style="color: #ea2088; font-style: bold; font-size: 3rem;">
         <div class="col-md-8">Historia Sprzedaży</div>
     </div>
@@ -16,18 +23,22 @@
         <table class="table table-hover table-stripped w-100">
             <thead class="thead-inverse align-middle">
                 <tr>
+                    <th>Data i czas</th>
                     <th>Faktura NR</th>
                     <th>Produkt</th>
                     <th>Ilość</th>
                     <th>Cena jedn.</th>
                     <th>Rabat</th>
-                    <th>Vat</th>
+<!--                    <th>Vat</th>-->
                     <th>SUMA</th>
                 </tr>
             </thead>
             <tbody>
                 {% for r in rachunki %}
                     <tr>
+                        <td>
+                            {{r.czas}}
+                        </td>
                         <td>
                             {{r.id}}
                         </td>
@@ -43,13 +54,13 @@
                         <td>
                             {{r.rabat}} %
                         </td>
-                        <td>
-                            {% if r.vat_procent == '0' %}
-                                -
-                            {% else %}
-                                {{r.vat_wartosc}} PLN ({{ r.vat_procent}}%)
-                            {% endif %}
-                        </td>
+<!--                        <td>-->
+<!--                            {% if r.vat_procent == '0' %}-->
+<!--                                - -->
+<!--                            {% else %}-->
+<!--                                {{r.vat_wartosc}} PLN ({{ r.vat_procent}}%)-->
+<!--                            {% endif %}-->
+<!--                        </td>-->
                         <td>
                             <span class="font-weight-bold">{{ r.wartosc}} PLN</span>
                         </td>
