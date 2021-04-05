@@ -21,28 +21,17 @@ KATEGORIE = [('obuwie-damskie', 'obuwie-damskie'),
              ]
 
 
-def create_product_code(kategoria):
-    num = 0
-    if kategoria == 'obuwie':
-        num = 1
-    elif kategoria == "damskie":
-        num = 2
-    elif kategoria == "dzieciece":
-        num = 3
-    else:
-        num = num
+def create_product_code():
+    previous = Stock.objects.order_by('numer_produktu').last()
+    print("===================")
+    print(previous.__dict__)
 
-    if Stock.objects.filter(kategoria=kategoria).count() == 0:
-        print('No stock: INIT ', int(f"{num}0000010"))
-        return int(f"{num}0000010")
+    if previous:
+        print('WAS STACK, NEW', int(previous.numer_produktu) + 10)
+        return int(previous.numer_produktu) + 10
     else:
-        previous = Stock.objects.filter(kategoria=kategoria).last().numer_produktu
-        if previous:
-            print('WAS STACK, NEW', int(previous) + 10)
-            return int(previous) + 10
-        else:
-            print('DUNNO', int(f"{num}0000010"))
-            return int(f"{num}0000010")
+        print('DUNNO', int(f"90000010"))
+        return int(f"90000010")
 
 
 class Stock(models.Model):
@@ -69,10 +58,9 @@ class Stock(models.Model):
         if not self.numer_produktu:
 
             EAN = barcode.get_barcode_class('ean8')
-            ean = EAN(f'{create_product_code(self.kategoria)}', writer=ImageWriter())
+            ean = EAN(f'{create_product_code()}', writer=ImageWriter())
             self.numer_produktu = int(str(ean))
-            self.pk = self.numer_produktu
-            print(self.pk)
+            print(self.numer_produktu)
 
             buffer = BytesIO()
             ean.write(buffer, text=f"{self.numer_produktu},"

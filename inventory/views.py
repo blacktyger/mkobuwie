@@ -21,7 +21,7 @@ def scanner_handler(request):
         if Stock.objects.filter(numer_produktu=code).exists():
             print("found id")
             messages.success(request, f"ZNALEZIONO PRODUKT {code}")
-            return redirect(f'edit-stock', pk=code)
+            return redirect(f'edit-stock', numer_produktu=code)
         else:
             print("not id")
             messages.warning(request, f"NIE MOŻNA ZNALEŹĆ PRODUKTU {code}")
@@ -30,13 +30,13 @@ def scanner_handler(request):
 
 class StockListView(FilterView, ListView):
     filterset_class = StockFilter
-    queryset = Stock.objects.filter(is_deleted=False)
+    queryset = Stock.objects.all()
     template_name = 'inventory.html'
     paginate_by = 50
 
     def get_context_data(self, **kwargs):
         context = super(StockListView, self).get_context_data(**kwargs)
-        context['all_stock'] = Stock.objects.filter(is_deleted=False).count()
+        context['all_stock'] = self.get_queryset().count()
         context['all_kategorie'] = len(KATEGORIE)
 
         self.request.session['qs'] = [item.numer_produktu for item in self.object_list]
@@ -45,8 +45,8 @@ class StockListView(FilterView, ListView):
 
 def StockListViewCSV(request):
     if request.session.get('qs'):
-        if len(request.session.get('qs')) == Stock.objects.filter(is_deleted=False).count():
-            return render_to_csv_response(Stock.objects.filter(is_deleted=False) \
+        if len(request.session.get('qs')) == Stock.objects.all().count():
+            return render_to_csv_response(Stock.objects.all() \
                                           .values('numer_produktu', 'kategoria',
                                                   'nazwa', 'ilosc', 'cena', 'wartosc'))
         else:
@@ -64,6 +64,8 @@ class StockCreateView(SuccessMessageMixin,
     form_class = StockForm  # setting 'StockForm' form as form
     template_name = "edit_stock.html"  # 'edit_stock.html' used as the template
     success_message = "Dodano nowy produkt"  # displays message when form is submitted
+    slug_field = 'numer_produktu'
+    slug_url_kwarg = 'numer_produktu'
 
     def get_context_data(self, **kwargs):  # used to send additional context
         context = super().get_context_data(**kwargs)
@@ -72,7 +74,7 @@ class StockCreateView(SuccessMessageMixin,
         return context
 
     def get_success_url(self):
-        return reverse('edit-stock', kwargs={'pk': self.object.pk})
+        return reverse('edit-stock', kwargs={'numer_produktu': self.object.numer_produktu})
 
 
 class StockUpdateView(SuccessMessageMixin, UpdateView):  # updateview class to edit stock, mixin used to display message
@@ -80,6 +82,8 @@ class StockUpdateView(SuccessMessageMixin, UpdateView):  # updateview class to e
     form_class = StockForm  # setting 'StockForm' form as form
     template_name = "detail_stock.html"  # 'edit_stock.html' used as the template
     success_message = "Zapisano zmiany w produkcie"  # displays message when form is submitted
+    slug_field = 'numer_produktu'
+    slug_url_kwarg = 'numer_produktu'
 
     def get_context_data(self, **kwargs):  # used to send additional context
         context = super().get_context_data(**kwargs)
@@ -93,17 +97,18 @@ class StockUpdateView(SuccessMessageMixin, UpdateView):  # updateview class to e
 class StockDeleteView(View):  # view class to delete stock
     template_name = "delete_stock.html"  # 'delete_stock.html' used as the template
     success_message = "Usunięto produkt"  # displays message when form is submitted
+    slug_field = 'numer_produktu'
+    slug_url_kwarg = 'numer_produktu'
 
-    def get(self, request, pk):
-        print(pk)
-        stock = get_object_or_404(Stock, pk=pk)
+    def get(self, request, numer_produktu):
+        print(numer_produktu)
+        stock = get_object_or_404(Stock, numer_produktu=numer_produktu)
         return render(request, self.template_name, {'object': stock})
 
-    def post(self, request, pk):
-        print(pk)
+    def post(self, request, numer_produktu):
+        print(numer_produktu)
 
-        stock = get_object_or_404(Stock, pk=pk)
-        stock.is_deleted = True
-        stock.save()
+        stock = get_object_or_404(Stock, numer_produktu=numer_produktu)
+        stock.delete()
         messages.success(request, self.success_message)
         return redirect('inventory')

@@ -7,7 +7,7 @@ class HomeView(View):
     template_name = "home.html"
 
     def get(self, request):
-        sprzedane = Transakcja.objects.all()
+        sprzedane = Transakcja.objects.filter(ilosc__gte=3)
         ilosci = {}
         for item in sprzedane:
             if item.produkt.nazwa in ilosci:
