@@ -13,6 +13,7 @@ from inventory.items import items
 KATEGORIE = [('obuwie-damskie', 'obuwie-damskie'),
              ('obuwie-meskie', 'obuwie-meskie'),
              ('obuwie-dzieciece', 'obuwie-dzieciece'),
+             ('obuwie-mlodziezowe', 'obuwie-mlodziezowe'),
              ('odziez', 'odziez'),
              ('dodatki', 'dodatki'),
              ('torebki', 'torebki'),

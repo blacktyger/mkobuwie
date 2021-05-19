@@ -9,7 +9,6 @@ cryptography==3.3.1
 defusedxml==0.6.0
 Django
 gunicorn
-django-heroku
 django-allauth
 django-countries
 django-crispy-forms
