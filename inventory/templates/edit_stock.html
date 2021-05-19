@@ -44,8 +44,8 @@
                             <button type="reset" class="btn btn-warning mx-2" >Wyczyść</button>
                         {% endif %}
                         {% if delbtn %}
-                             <a href="{% url 'transaction-new' object.numer_produktu %}" class="btn btn-success">Sprzedaj</a>
-                            <a href="{% url 'delete-stock' object.numer_produktu %}" class="btn btn-danger">Usuń Produkt</a>
+                             <a href="{% url 'transaction-new' object.pk %}" class="btn btn-success">Sprzedaj</a>
+                            <a href="{% url 'delete-stock' object.pk %}" class="btn btn-danger">Usuń Produkt</a>
                         {% endif %}
                         <a href="{% url 'inventory' %}" class="btn btn-primary mx-2">Wróć</a>
                     </div>
