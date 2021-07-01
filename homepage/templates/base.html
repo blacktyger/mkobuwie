@@ -16,7 +16,7 @@
     <link rel="stylesheet" type="text/css" href="{% static 'css/main.css' %}">    
     <link rel="stylesheet" type="text/css" href="{% static 'css/sidebar.css' %}">    
     <link rel="stylesheet" type="text/css" href="{% static 'css/dialogbox.css' %}">    
-    <script src="https://kit.fontawesome.com/a04fbceb93.js" crossorigin="anonymous"></script>
+    <script src="https://kit.fontawesome.com/c97d901669.js" crossorigin="anonymous"></script>
     <title>MK Obuwie - {% block title %}{% endblock title %}</title>
 
 </head>
@@ -164,6 +164,26 @@
             </div>
     {% endif %}
             <div class="container">
+                {% if 'rachunek' in request.session.keys %}
+                    <div class="text-center my-4">
+                        <div class="my-3 text-center">
+                            <span class="h3">
+                                FAKTURA NR.
+                                <span class="badge badge-info">{{request.session.rachunek}}</span>
+                                    W TRAKCIE REALIZACJI
+                            </span>
+                        </div>
+                        <a href="{% url 'zamknij-rachunek' pk=request.session.rachunek %}" class="btn btn-success mx-1 mb-3"
+                           style="height: 75px; width: 45%;">
+                            <h3>Zakończ Sprzedaż</h3>
+                        </a>
+                        <div class="my-2 text-center">
+                            <span class="h3">
+                                LUB DODAJ NASTĘPNY PRODUKT
+                            </span>
+                        </div>
+                    </div>
+                {% endif %}
                 {% block content %}
                 {% endblock content %}
             </div>

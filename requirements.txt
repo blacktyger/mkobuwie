@@ -37,3 +37,4 @@ sqlparse==0.3.0
 stripe==2.55.1
 urllib3==1.26.2
 wrapt==1.11.2
+django-queryset-csv

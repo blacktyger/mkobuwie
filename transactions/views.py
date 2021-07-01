@@ -1,26 +1,16 @@
 import datetime
-from decimal import Decimal as d
 from django.shortcuts import render, redirect, get_object_or_404
-from django.utils import timezone
 from django.views.generic import (
     View,
     ListView,
     CreateView,
     UpdateView,
-    DeleteView, DetailView
+    DeleteView,
     )
 from django.contrib.messages.views import SuccessMessageMixin
 from django.contrib import messages
 from django.core.paginator import Paginator, EmptyPage, PageNotAnInteger
-from .models import (
-    PurchaseBill,
-    Supplier,
-    PurchaseItem,
-    PurchaseBillDetails,
-    SaleBill,
-    SaleItem,
-    SaleBillDetails, Rachunek
-    )
+
 from .forms import (
     SelectSupplierForm,
     PurchaseItemFormset,
@@ -29,15 +19,47 @@ from .forms import (
     SaleForm,
     SaleItemFormset,
     SaleDetailsForm,
-    TransakcjaForm, TransakcjaFormset
+    TransakcjaForm
     )
-from inventory.models import Stock
-from .models import Transakcja
+from inventory.models import *
+from .models import *
+
+
+# class RachunekView(SuccessMessageMixin, View):
+#     model = Rachunek
+#     template_name = "sales/rachunek.html"
+#
+#     def get(self, request, pk):
+#         context = {
+#             'rachunek': Rachunek.objects.get(id=pk)
+#             }
+#         return render(request, self.template_name, context)
+
+
+class ZamknijRachunekView(SuccessMessageMixin, View):
+    model = Rachunek
+    template_name = "sales/sales_list.html"
+
+    def get(self, request, pk):
+        rachunek = Rachunek.objects.get(id=pk)
+        messages.success(request, f"FAKTURA NR. {rachunek.id} zakończona".upper())
+        if 'rachunek' in request.session.keys():
+            del request.session['rachunek']
+        return redirect('transactions-list')
+
+#
+# class DodajProduktView(SuccessMessageMixin, View):
+#     model = Rachunek
+#     template_name = "home.html"
+#
+#     def get(self, request, pk):
+#         rachunek = Rachunek.objects.get(id=pk)
+#         # messages.success(request, f"DODAJ nastepny produkt do faktury nr. {rachunek.id}".upper())
+#         return redirect('home')
 
 
 class TransakcjaView(SuccessMessageMixin, ListView):
-    model = Transakcja
-    form_class = TransakcjaForm
+    model = Rachunek
     context_object_name = 'rachunki'
     template_name = "sales/sales_list.html"
     ordering = ['-czas']
@@ -51,9 +73,9 @@ class TransakcjaView(SuccessMessageMixin, ListView):
         sprzedaz_dzienna = self.model.objects.filter(czas__gte=today)
         sprzedaz_tygodniowa = self.model.objects.filter(czas__gte=tygodniowa)
 
+        # context['produkty'] = Transakcja.objects.filter(rachunek=)
         context['sprzedaz_dzienna'] = sum([tx.wartosc for tx in sprzedaz_dzienna])
         context['sprzedaz_tygodniowa'] = sum([tx.wartosc for tx in sprzedaz_tygodniowa])
-
         return context
 
 
@@ -74,7 +96,6 @@ class TransakcjaDetailView(SuccessMessageMixin, View):
                 'ilosc': 1,
                 }
             form = TransakcjaForm(initial=initials)
-
         else:
             messages.warning(request, message='NIE ZNALEZIONO PRODUKTU')
             return redirect('inventory')
@@ -85,7 +106,6 @@ class TransakcjaDetailView(SuccessMessageMixin, View):
             'form': form,
             'x': [x.value() for x in form]
             }
-
         return render(request, 'sales/new_sale.html', context)
 
     def post(self, request, *args, **kwargs):
@@ -94,29 +114,33 @@ class TransakcjaDetailView(SuccessMessageMixin, View):
         if form.is_valid():
             produkt = form.cleaned_data['produkt']
             data = form.cleaned_data
-            print(data)
-
             data['czas'] = timezone.now()
             data['wartosc'] = d(data['ilosc']) * d(data['cena'])
-            data['vat_wartosc'] = d(data['vat_procent']) / 100 * d(data['wartosc'])
-
             this = Transakcja(**data)
             print(data)
 
             if this.update_stock():
+                if 'rachunek' not in request.session.keys():
+                    rachunek = Rachunek.objects.create()
+                    request.session['rachunek'] = rachunek.id
+                else:
+                    id = request.session['rachunek']
+                    rachunek = Rachunek.objects.get(id=id)
+
+                this.rachunek = rachunek
                 this.save()
-                print(f"SAVED {this}")
-                messages.success(request, f"UDANA SPRZEDAŻ {produkt.nazwa}")
-                messages.success(request, f"SPRZEDANO {data['ilosc']} SZTUK ZA {data['wartosc']} PLN")
+                rachunek.wartosc += this.wartosc
+                rachunek.save()
+                print(f"SAVED {this} to {rachunek}")
+                messages.success(request, f"DODANO DO FAKTURY {produkt.nazwa}")
                 return redirect('home')
             else:
-                messages.warning(request, f"SPRZEDAŻ NIE UDANA {produkt.nazwa}")
+                messages.warning(request, f"NIEUDANA SPRZEDAŻ {produkt.nazwa}")
                 messages.warning(request, f"ZLECENIE NA {data['ilosc']} SZT | STAN MAGAZYNU {produkt.ilosc }")
-                return redirect('edit-stock', pk=produkt.numer_produktu)
-
+                return redirect('edit-stock', numer_produktu=produkt.numer_produktu)
         else:
-            messages.warning(request, f"NIE UDAŁO SPRZEDAĆ")
-            return redirect('edit-stock', pk=kwargs['pk'])
+            messages.warning(request, f"NIE UDAŁO SIĘ SPRZEDAĆ")
+            return redirect('edit-stock', numer_produktu=kwargs['numer_produktu'])
 
 
 # shows a lists of all suppliers

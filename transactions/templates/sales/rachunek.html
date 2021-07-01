@@ -1,0 +1,30 @@
+{% extends "base.html" %} {% load crispy_forms_tags %}
+{% load static %}
+
+
+{% block title %} Rachunek {% endblock title %}
+
+
+{% block content %}
+<html>
+
+<div class="text-center mt-5">
+    <a href="{% url 'zamknij-rachunek' pk=request.session.rachunek %}" class="btn btn-success mx-1 mb-3"
+       style="height: 75px; width: 45%;">
+        <h3>Potwierdź Sprzedaż</h3>
+    </a>
+    <a href="{% url 'dodaj-produkt' pk=request.session.rachunek %}" class="btn btn-warning mx-1 mb-3"
+       style="height: 75px; width: 45%;">
+        <h3>Dodaj produkt</h3>
+    </a>
+</div>
+
+</html>
+<!-- Custom JS to add and remove item forms -->
+<script
+  src="https://code.jquery.com/jquery-3.5.1.js"
+  integrity="sha256-QWo7LDvxbWT2tbbQ97B53yJnYU3WhH/C8ycbRAkjPDc="
+  crossorigin="anonymous"></script>
+<script type="text/javascript" src="{% static 'js/dialogbox.js' %}"></script>
+
+{% endblock content %}

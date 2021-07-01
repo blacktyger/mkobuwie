@@ -1,29 +1,23 @@
-from random import random
-from decimal import Decimal as d
 from django.contrib.auth.models import User
-from django.db import models
+from decimal import Decimal as d
 from django.utils import timezone
-from inventory.models import Stock
+from inventory.models import *
+from django.db import models
 
 VAT = [('0', 0), ('8', 8), ('19', 19), ('21', 21)]
 
 
-class Rachunek(models.Model):
-    time = models.DateTimeField(default=timezone.now, blank=True)
-    cena = models.FloatField(default=1)
-    produkt = models.ForeignKey(Stock, on_delete=models.CASCADE)
-
-
 class Transakcja(models.Model):
-    czas = models.DateTimeField(default=timezone.now, blank=True)
+    czas = models.DateTimeField(auto_now=True)
     cena = models.DecimalField(default=1, decimal_places=2, max_digits=8)
     ilosc = models.IntegerField(default=1)
     rabat = models.DecimalField(default=0, blank=True, null=True, decimal_places=2, max_digits=8)
-    uwagi = models.TextField(default=1, blank=True, null=True)
+    uwagi = models.TextField(default='', blank=True, null=True)
     wartosc = models.DecimalField(default=1, blank=True, null=True, decimal_places=2, max_digits=8)
     vat_procent = models.CharField(choices=VAT, max_length=64, default=VAT[0])
     vat_wartosc = models.DecimalField(default=0, blank=True, null=True, decimal_places=2, max_digits=8)
     produkt = models.ForeignKey(Stock, blank=True, on_delete=models.CASCADE)
+    rachunek = models.ForeignKey('Rachunek', blank=True, null=True, on_delete=models.CASCADE)
 
     def check_sell(self):
         if self.produkt.ilosc < self.ilosc:
@@ -45,23 +39,30 @@ class Transakcja(models.Model):
                 return True
 
     def save(self, *args, **kwargs):
-        # if self.rabat:
-        #     self.cena = d(self.cena * (self.rabat / 100))
-
         self.wartosc = d(self.ilosc * self.cena)
-        #
-        # if self.vat_procent:
-        #     self.vat_wartosc = self.wartosc * d(d(self.vat_procent) / 100)
-
         return super().save(*args, **kwargs)
 
     def __str__(self):
         return f"Sprzedaż z dnia {self.czas}"
 
 
-# contains suppliers
+class Rachunek(models.Model):
+    czas = models.DateTimeField(auto_now=True)
+    komentarz = models.TextField(blank=True, null=True)
+    wartosc = models.DecimalField(blank=True, null=True, decimal_places=2, max_digits=8)
+
+    def save(self, *args, **kwargs):
+        self.wartosc = sum([item.wartosc for item in self.transakcja_set.all()])
+        return super().save(*args, **kwargs)
+
+    def produkty(self):
+        return Transakcja.objects.filter(rachunek=self)
+
+    def __str__(self):
+        return f"Rachunek  {self.id}"
+
+
 class Supplier(models.Model):
-    id = models.AutoField(primary_key=True)
     name = models.CharField(max_length=150)
     phone = models.CharField(max_length=12, unique=True)
     address = models.CharField(max_length=200)
@@ -75,9 +76,9 @@ class Supplier(models.Model):
 
 # contains the purchase bills made
 class PurchaseBill(models.Model):
-    billno = models.AutoField(primary_key=True)
     time = models.DateTimeField(auto_now=True)
-    supplier = models.ForeignKey(Supplier, on_delete=models.CASCADE, related_name='purchasesupplier')
+    supplier = models.ForeignKey(Supplier, on_delete=models.CASCADE,
+                                 related_name='purchasesupplier')
 
     def __str__(self):
         return "Bill no: " + str(self.billno)
@@ -127,7 +128,6 @@ class PurchaseBillDetails(models.Model):
 
 # contains the sale bills made
 class SaleBill(models.Model):
-    billno = models.AutoField(primary_key=True)
     time = models.DateTimeField(auto_now=True)
 
     name = models.CharField(max_length=150)

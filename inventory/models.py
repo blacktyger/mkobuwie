@@ -7,8 +7,7 @@ import barcode
 from barcode.writer import ImageWriter
 from django.core.files import File
 from django.db import models
-
-from inventory.items import items
+from inventory.items import *
 
 KATEGORIE = [('obuwie-damskie', 'obuwie-damskie'),
              ('obuwie-meskie', 'obuwie-meskie'),
@@ -36,7 +35,7 @@ def create_product_code():
 
 
 class Stock(models.Model):
-    numer_produktu = models.CharField(max_length=128, null=True, unique=True)
+    numer_produktu = models.IntegerField(null=True, unique=True)
     kategoria = models.CharField(choices=KATEGORIE, max_length=64, default=KATEGORIE[0])
     name = models.CharField(max_length=64, blank=True, editable=False)
     nazwa = models.CharField(max_length=64, default="nazwa")

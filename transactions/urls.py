@@ -16,7 +16,9 @@ urlpatterns = [
 
     path('new/<pk>', views.TransakcjaDetailView.as_view(), name='transaction-new'),
     path('list', views.TransakcjaView.as_view(), name='transactions-list'),
-
+    # path('rachunek/<pk>', views.RachunekView.as_view(), name='rachunek'),
+    # path('dodaj/<pk>', views.DodajProduktView.as_view(), name='dodaj-produkt'),
+    path('zamknij/<pk>', views.ZamknijRachunekView.as_view(), name='zamknij-rachunek'),
 
     path('sales/', views.SaleView.as_view(), name='sales-list'),
     path('sales/new', views.SaleCreateView.as_view(), name='new-sale'),
@@ -25,3 +27,4 @@ urlpatterns = [
     path("purchases/<billno>", views.PurchaseBillView.as_view(), name="purchase-bill"),
     path("sales/<billno>", views.SaleBillView.as_view(), name="sale-bill"),
     ]
+

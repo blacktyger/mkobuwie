@@ -1,6 +1,6 @@
 from django.shortcuts import render
 from django.views.generic import View, TemplateView
-from transactions.models import Transakcja
+from transactions.models import *
 
 
 class HomeView(View):
