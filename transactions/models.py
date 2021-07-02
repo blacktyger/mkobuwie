@@ -17,7 +17,7 @@ class Transakcja(models.Model):
     vat_procent = models.CharField(choices=VAT, max_length=64, default=VAT[0])
     vat_wartosc = models.DecimalField(default=0, blank=True, null=True, decimal_places=2, max_digits=8)
     produkt = models.ForeignKey(Stock, blank=True, on_delete=models.CASCADE)
-    rachunek = models.ForeignKey('Rachunek', blank=True, null=True, on_delete=models.CASCADE)
+    rachunek = models.ForeignKey('Rachunek', blank=True, null=True, on_delete=models.SET_NULL)
 
     def check_sell(self):
         if self.produkt.ilosc < self.ilosc:
@@ -47,13 +47,13 @@ class Transakcja(models.Model):
 
 
 class Rachunek(models.Model):
-    czas = models.DateTimeField(auto_now=True)
+    czas = models.DateTimeField(default=timezone.now)
     komentarz = models.TextField(blank=True, null=True)
-    wartosc = models.DecimalField(blank=True, null=True, decimal_places=2, max_digits=8)
+    wartosc = models.DecimalField(blank=True, null=True, default=0, decimal_places=2, max_digits=8)
 
-    def save(self, *args, **kwargs):
-        self.wartosc = sum([item.wartosc for item in self.transakcja_set.all()])
-        return super().save(*args, **kwargs)
+    # def save(self, *args, **kwargs):
+    #     self.wartosc = sum([item.wartosc for item in self.transakcja_set.all()])
+    #     return super().save(*args, **kwargs)
 
     def produkty(self):
         return Transakcja.objects.filter(rachunek=self)

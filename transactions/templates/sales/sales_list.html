@@ -24,7 +24,6 @@
             <thead class="thead-inverse align-middle">
                 <tr>
                     <th>DATA</th>
-                    <th>FAKTURA</th>
                     <th>PRODUKT</th>
                     <th>ILOŚć</th>
                     <th>CENA</th>
@@ -36,18 +35,20 @@
                 {% for rachunek in rachunki %}
                 <tr style="background-color: #6495ED">
                     <td>{{rachunek.czas}}</td>
-                    <td>NR. {{rachunek.id}}</td>
-                    <td colspan="5" class="text-right">
+                    <td colspan="4" class="text-right">
+                        <a href="{% url 'faktura-dane' pk=rachunek.id %}" class="ml-4 btn btn-dark btn-sm">
+                            <i class="ml-2 fas fa-print"></i>
+                            WYSTAW FAKTURĘ
+                        </a>
+                    </td>
+                    <td>       
                         <span class="font-weight-bold"> {{rachunek.wartosc}} PLN</span>
-                        <a href="#" class="text-white"><i class="ml-2 fas fa-print"></i></a>
-
                     </td>
                 </tr>
                     {% for r in rachunek.transakcja_set.all %}
                     <tr>
                         <td>
-                        </td>
-                        <td>
+
                         </td>
                         <td>
                             <a href="{% url 'edit-stock' r.produkt.numer_produktu %}">{{r.produkt.nazwa}}</a>

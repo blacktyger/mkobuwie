@@ -25,15 +25,17 @@ from inventory.models import *
 from .models import *
 
 
-# class RachunekView(SuccessMessageMixin, View):
-#     model = Rachunek
-#     template_name = "sales/rachunek.html"
-#
-#     def get(self, request, pk):
-#         context = {
-#             'rachunek': Rachunek.objects.get(id=pk)
-#             }
-#         return render(request, self.template_name, context)
+class RachunekView(SuccessMessageMixin, View):
+    model = Rachunek
+    template_name = "bill/sale_bill.html"
+
+    def get(self, request, pk):
+        context = {
+            'rachunek': Rachunek.objects.get(id=pk),
+            'numer_faktury': request.GET.get('numer_faktury')
+            }
+        return render(request, self.template_name, context)
+
 
 
 class ZamknijRachunekView(SuccessMessageMixin, View):
@@ -47,15 +49,17 @@ class ZamknijRachunekView(SuccessMessageMixin, View):
             del request.session['rachunek']
         return redirect('transactions-list')
 
-#
-# class DodajProduktView(SuccessMessageMixin, View):
-#     model = Rachunek
-#     template_name = "home.html"
-#
-#     def get(self, request, pk):
-#         rachunek = Rachunek.objects.get(id=pk)
-#         # messages.success(request, f"DODAJ nastepny produkt do faktury nr. {rachunek.id}".upper())
-#         return redirect('home')
+
+class FakturaDaneView(SuccessMessageMixin, View):
+    model = Rachunek
+    template_name = "faktura_dane.html"
+
+    def get(self, request, pk):
+        rachunek = Rachunek.objects.get(id=pk)
+        context = {
+            'rachunek': Rachunek.objects.get(id=pk),
+            }
+        return render(request, self.template_name, context)
 
 
 class TransakcjaView(SuccessMessageMixin, ListView):
@@ -110,11 +114,18 @@ class TransakcjaDetailView(SuccessMessageMixin, View):
 
     def post(self, request, *args, **kwargs):
         form = TransakcjaForm(request.POST)
-        form.save(commit=False)
+        try:
+            form.save(commit=False)
+        except:
+            print(form.errors)
+            print(form.cleaned_data)
+
         if form.is_valid():
-            produkt = form.cleaned_data['produkt']
+            produkt_id = request.POST.get('numer_produktu')
+            produkt = Stock.objects.get(numer_produktu=produkt_id)
             data = form.cleaned_data
             data['czas'] = timezone.now()
+            data['produkt'] = produkt
             data['wartosc'] = d(data['ilosc']) * d(data['cena'])
             this = Transakcja(**data)
             print(data)

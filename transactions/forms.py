@@ -20,14 +20,14 @@ class TransakcjaForm(forms.ModelForm):
         self.fields['ilosc'].widget.attrs.update({'class': 'numberinput form-control col-5', 'id': 'ilosc', 'required': 'false'})
         self.fields['rabat'].widget.attrs.update({'class': 'numberinput form-control col-5', 'id': 'rabat', 'required': 'false'})
         self.fields['wartosc'].widget.attrs.update({'class': 'numberinput form-control col-5', 'id': 'wartosc', 'disabled': 'true'})
-        self.fields['vat_wartosc'].widget.attrs.update({'class': 'numberinput form-control col-5', 'id': 'vat_wartosc', 'required': 'false'})
-        self.fields['produkt'].widget.attrs.update({'class': 'textinput form-control col-5', 'id': 'produkt'})
+        # self.fields['vat_wartosc'].widget.attrs.update({'class': 'numberinput form-control col-5', 'id': 'vat_wartosc', 'required': 'false'})
+        # self.fields['produkt'].widget.attrs.update({'class': 'textinput form-control col-5', 'id': 'produkt'})
         self.fields['uwagi'].widget.attrs.update({'class': 'textinput form-control', 'id': 'uwagi', 'required': 'false'})
         # self.fields['czas'].widget.attrs.update({'class': 'dateinput form-control', 'id': 'czas', 'required': 'false'})
 
     class Meta:
         model = Transakcja
-        fields = ['cena', 'ilosc', 'rabat', 'uwagi', 'produkt', 'wartosc', 'vat_wartosc']
+        fields = ['cena', 'ilosc', 'rabat', 'uwagi', 'wartosc']
 
 
 TransakcjaFormset = formset_factory(TransakcjaForm, extra=1)

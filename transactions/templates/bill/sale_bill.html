@@ -1,187 +1,195 @@
-{% extends bill_base %}
-{% load static %}
+<!DOCTYPE html>
+<html>
+    <head>
+        <style type="text/css" media="print">
+        @page {
+            size: auto;   /* auto is the initial value */
+            margin: 0;  /* this affects the margin in the printer settings */
+        }
+        </style>
 
+        <meta charset="utf-8" />
+        <title>A simple, clean, and responsive HTML invoice template</title>
 
-{% block title %} Sale Bill No : {{ bill.billno }}{% endblock title %}
+        <style>
+            .invoice-box {
+                max-width: 800px;
+                margin: auto;
+                padding: 30px;
+                border: 1px solid #eee;
+                box-shadow: 0 0 10px rgba(0, 0, 0, 0.15);
+                font-size: 16px;
+                line-height: 24px;
+                font-family: 'Helvetica Neue', 'Helvetica', Helvetica, Arial, sans-serif;
+                color: #555;
+            }
 
+            .invoice-box table {
+                width: 100%;
+                line-height: inherit;
+                text-align: left;
+            }
 
-{% block content %}
-    
-    <div style="color:#ea2088; font-style: bold; font-size: 3rem;
-    border-bottom: 1px solid white;">Sale Bill No : {{ bill.billno }}</div>
+            .invoice-box table td {
+                padding: 5px;
+                vertical-align: top;
+            }
 
-    <br><br>
+            .invoice-box table tr td:nth-child(2) {
+                text-align: right;
+            }
 
-    <form method="post">
-    {% csrf_token %}
+            .invoice-box table tr.top table td {
+                padding-bottom: 20px;
+            }
 
-        <div class="bg">
+            .invoice-box table tr.top table td.title {
+                font-size: 45px;
+                line-height: 45px;
+                color: #333;
+            }
 
-            <br><br>
+            .invoice-box table tr.information table td {
+                padding-bottom: 40px;
+            }
 
-            <div id="printArea" class="bg">
+            .invoice-box table tr.heading td {
+                background: #eee;
+                border-bottom: 1px solid #ddd;
+                font-weight: bold;
+            }
 
-                <table class="outer-box inner-box" style="width: 800px; margin-left: auto; margin-right: auto;">
-                    <tbody>
-                    
-                        <tr style="height: 1px;">
-                            <td> <p style="text-align: center;">TAX INVOICE - SALE</p> </td>
-                        </tr>
-                    
-                        <tr style="text-align: center;">
-                            <td >
-                                <span style="font-size: 350%;">Company</span> <br>
-                                <span style="font-size: 120%; font-weight: bold; text-decoration: underline;">DEALERS IN : Products</span> <br>
-                                <span style="text-decoration: underline; font-weight: bold;">REGD ADDRESS :</span> Address Line 1<br>Address line 2<br>
-                                <span style="text-decoration: underline; font-weight: bold;">EMAIL : email</span> <br><br>
-                            </td>
-                        </tr>
-                    
-                        <tr>
-                            <td>
-                            <table class="outer-box" style="width: 800px; margin-left: auto; margin-right: auto;">
-                                <tbody>
-                                    <tr>
-                                        <td class="inner-box" style="text-align: center; font-weight: bold;" colspan="3">GSTIN NO - 123456789ABCDEF</td>
-                                    </tr>
-                                    <tr>
-                                        <td class="inner-box" style="width: 50%; font-weight: bold;">&nbsp;NAME OF CONSIGNEE / BUYER</td>
-                                        <td class="inner-box" style="width: 25%; font-weight: bold;">&nbsp;INVOICE NO</td>
-                                        <td class="inner-box" style="width: 25%;">&nbsp;{{ bill.billno }}</td>
-                                    </tr>
-                                    <tr>
-                                        <td class="inner-box" style="width: 50%;">&nbsp;{{ bill.name }}</td>
-                                        <td class="inner-box" style="width: 25%; font-weight: bold;">&nbsp;DATE</td>
-                                        <td class="inner-box" style="width: 25%;">&nbsp;{{ bill.time.date }}</td>
-                                    </tr>
-                                    <tr>
-                                        <td class="inner-box" style="width: 50%;" rowspan="3">{{ bill.address|linebreaks }}</td>
-                                        <td class="inner-box" style="width: 25%; font-weight: bold;">&nbsp;EWAY NO</td>
-                                        <td class="inner-box align-middle" style="width: 25%;"> <input type="text" name="eway" class="align-middle" style="border: 0; overflow: hidden;" value="{% if billdetails.eway %}{{ billdetails.eway }}{% endif %}"> </td>
-                                    </tr>
-                                    <tr>
-                                        <td class="inner-box" style="width: 25%; font-weight: bold;">&nbsp;VEH NO</td>
-                                        <td class="inner-box align-middle" style="width: 25%;"> <input type="text" name="veh" class="align-middle" style="border: 0; overflow: hidden;" value="{% if billdetails.veh %}{{ billdetails.veh }}{% endif %}"> </td>
-                                    </tr>
-                                    <tr>
-                                        <td class="inner-box" style="width: 25%; font-weight: bold;">&nbsp;DESTINATION</td>
-                                        <td class="inner-box align-middle" style="width: 25%;"> <input type="text" name="destination" class="align-middle" style="border: 0; overflow: hidden;" value="{% if billdetails.destination %}{{ billdetails.destination }}{% endif %}"> </td>
-                                    </tr>
-                                    <tr>
-                                        <td class="inner-box" style="font-weight: bold;">&nbsp;GSTIN No : {{ bill.gstin }} </td>
-                                        <td class="inner-box" style="width: 25%; font-weight: bold;">&nbsp;PO NO &amp; DATE</td>
-                                        <td class="inner-box align-middle" style="width: 25%;"> <input type="text" name="po" class="align-middle" style="border: 0; overflow: hidden;" value="{% if billdetails.po %}{{ billdetails.po }}{% endif %}"> </td>
-                                    </tr>
-                                </tbody>
-                            </table>
-                            </td>
-                        </tr>
-                        
-                        <tr>
-                            <td>
-                            <table class="outer-box" style="width: auto; margin-left: auto; margin-right: auto;">
-                                <tbody>
-                                    <tr>
-                                        <td class="inner-box" style="width: 5%; font-weight: bold; text-align: center;">&nbsp;SL NO</td>
-                                        <td class="inner-box" style="width: 30%; font-weight: bold; text-align: center;">DESCRIPTION OF THE GOODS</td>
-                                        <td class="inner-box" style="width: 12%; font-weight: bold; text-align: center;">&nbsp;HSN/SAC</td>
-                                        <td class="inner-box" style="width: 12%; font-weight: bold; text-align: center;">QTY MTS</td>
-                                        <td class="inner-box" style="width: 12%; font-weight: bold; text-align: center;">RATE PMT</td>
-                                        <td class="inner-box" style="width: 12%; font-weight: bold; text-align: center;">AMOUNT INRS</td>
-                                        <td class="inner-box" style="width: 5%; font-weight: bold; text-align: center;">PS</td>
-                                    </tr>
-                                    {% for item in items %}
-                                        <tr style="height: auto;">
-                                            <td class="inner-box" style="width: 5%;">&nbsp; {{ forloop.counter }}</td>
-                                            <td class="inner-box" style="width: 30%;">&nbsp; {{ item.stock.name }}</td>
-                                            <td class="inner-box" style="width: 12%;"></td>
-                                            <td class="inner-box" style="width: 12%;">&nbsp; {{ item.quantity }}</td>
-                                            <td class="inner-box" style="width: 12%;">&nbsp; {{ item.perprice }}</td>
-                                            <td class="inner-box" style="width: 12%;">&nbsp;{{ item.totalprice }}</td>
-                                            <td class="inner-box" style="width: 5%;">&nbsp;0</td>
-                                        </tr>
-                                    {% endfor %}
-                                </tbody>
-                            </table>
-                            </td>
-                        </tr>
-                        
-                        <tr>
-                            <td>
-                            <table class="outer-box inner-box" style="width: 800px; margin-left: auto; margin-right: auto;">
-                                <tbody>
-                                    <tr>
-                                        <td class="inner-box" style="width: 35%; text-align: center;" rowspan="6">
-                                            <p> <span style="font-weight: bold;">BANK DETAILS <br> company</span> <br>
-                                                bank name <br> AC NO-000 000 000 000 000 <br> IFSC CODE - ABCD 000 0000 <br> BRANCH <br> PH NO - 0123456789</p>
-                                        </td>
-                                        <td class="inner-box" style="width: 30%; font-weight: bold;">&nbsp;CGST @ 2.5%</td>
-                                        <td class="inner-box align-middle" style="width: 30%;">&nbsp; <input type="text" name="cgst" class="align-middle" pattern="[0-9]+\.[0-9]+" style="border: 0; overflow: hidden;" value="{% if billdetails.cgst %}{{ billdetails.cgst }}{% endif %}"></td>
-                                    </tr>
-                                    <tr>
-                                        <td class="inner-box" style="font-weight: bold;">&nbsp;SGST @ 2.5%</td>
-                                        <td class="inner-box align-middle">&nbsp; <input type="text" name="sgst" class="align-middle" pattern="[0-9]+\.[0-9]+" style="border: 0; overflow: hidden;" value="{% if billdetails.sgst %}{{ billdetails.sgst }}{% endif %}"></td>
-                                    </tr>
-                                    <tr>
-                                        <td class="inner-box" style="font-weight: bold;">&nbsp;IGST @ 5% </td>
-                                        <td class="inner-box align-middle">&nbsp; <input type="text" name="igst" class="align-middle" pattern="[0-9]+\.[0-9]+" style="border: 0; overflow: hidden;" value="{% if billdetails.igst %}{{ billdetails.igst }}{% endif %}"></td>
-                                    </tr>
-                                    <tr>
-                                        <td class="inner-box" style="font-weight: bold;">&nbsp;CESS @ 400/PMT </td>
-                                        <td class="inner-box align-middle">&nbsp; <input type="text" name="cess" class="align-middle" pattern="[0-9]+\.[0-9]+" style="border: 0; overflow: hidden;" value="{% if billdetails.cess %}{{ billdetails.cess }}{% endif %}"></td>
-                                    </tr>
-                                    <tr>
-                                        <td class="inner-box" style="font-weight: bold;">&nbsp;TCS @ 1%</td>
-                                        <td class="inner-box align-middle">&nbsp; <input type="text" name="tcs" class="align-middle" pattern="[0-9]+\.[0-9]+" style="border: 0; overflow: hidden;" value="{% if billdetails.tcs %}{{ billdetails.tcs }}{% endif %}"></td>
-                                    </tr>
-                                    <tr>
-                                        <td class="inner-box" style="font-weight: bold;">&nbsp;TOTAL</td>
-                                        <td class="inner-box align-middle">&nbsp; <input type="text" name="total" class="align-middle" pattern="[0-9]+\.[0-9]+" style="border: 0; overflow: hidden;" value="{% if billdetails.total %}{{ billdetails.total }}{% endif %}"> </td>
-                                    </tr>
-                                </tbody>
-                            </table>
-                            </td>
-                        </tr>
+            .invoice-box table tr.details td {
+                padding-bottom: 20px;
+            }
 
-                        <tr>
-                            <td style="text-align: right;">
-                                <span style="font-weight: bold;">FOR COMPANY <br><br><br><br> Signature</span>
-                            </td>
-                        </tr>
+            .invoice-box table tr.item td {
+                border-bottom: 1px solid #eee;
+            }
 
-                        <tr>
-                            <td style="text-align: center;">
-                                FINAL TEXT
-                            </td>
-                        </tr>
+            .invoice-box table tr.item.last td {
+                border-bottom: none;
+            }
 
-                    </tbody>
-                </table>
+            .invoice-box table tr.total td:nth-child(2) {
+                border-top: 2px solid #eee;
+                font-weight: bold;
+            }
 
-            </div>
+            @media only screen and (max-width: 600px) {
+                .invoice-box table tr.top table td {
+                    width: 100%;
+                    display: block;
+                    text-align: center;
+                }
 
-            <br><br>
+                .invoice-box table tr.information table td {
+                    width: 100%;
+                    display: block;
+                    text-align: center;
+                }
+            }
 
+            /** RTL **/
+            .invoice-box.rtl {
+                direction: rtl;
+                font-family: Tahoma, 'Helvetica Neue', 'Helvetica', Helvetica, Arial, sans-serif;
+            }
+
+            .invoice-box.rtl table {
+                text-align: right;
+            }
+
+            .invoice-box.rtl table tr td:nth-child(2) {
+                text-align: left;
+            }
+        </style>
+    </head>
+
+    <body>
+        <div class="invoice-box">
+            <table cellpadding="0" cellspacing="0">
+                <tr class="top">
+                    <td colspan="2">
+                        <table>
+                            <tr>
+                                <td class="title">
+                                    <h2>MK OBUWIE</h1>
+                                </td>
+
+                                <td>
+                                    Invoice #: 123<br />
+                                    Created: January 1, 2015<br />
+                                    Due: February 1, 2015
+                                </td>
+                            </tr>
+                        </table>
+                    </td>
+                </tr>
+
+                <tr class="information">
+                    <td colspan="2">
+                        <table>
+                            <tr>
+                                <td>
+                                    Sparksuite, Inc.<br />
+                                    12345 Sunny Road<br />
+                                    Sunnyville, CA 12345
+                                </td>
+
+                                <td>
+                                    Acme Corp.<br />
+                                    John Doe<br />
+                                    john@example.com
+                                </td>
+                            </tr>
+                        </table>
+                    </td>
+                </tr>
+
+                <tr class="heading">
+                    <td>Payment Method</td>
+
+                    <td>Check #</td>
+                </tr>
+
+                <tr class="details">
+                    <td>Check</td>
+
+                    <td>1000</td>
+                </tr>
+
+                <tr class="heading">
+                    <td>Item</td>
+
+                    <td>Price</td>
+                </tr>
+
+                <tr class="item">
+                    <td>Website design</td>
+
+                    <td>$300.00</td>
+                </tr>
+
+                <tr class="item">
+                    <td>Hosting (3 months)</td>
+
+                    <td>$75.00</td>
+                </tr>
+
+                <tr class="item last">
+                    <td>Domain name (1 year)</td>
+
+                    <td>$10.00</td>
+                </tr>
+
+                <tr class="total">
+                    <td></td>
+
+                    <td>Total: $385.00</td>
+                </tr>
+            </table>
         </div>
+    </body>
 
-        <br><br>
-
-        <div class="wrapper">
-            <button class="center ghost-blue" onclick="printpage('printArea')">Print</button>
-            <button class="center ghost-green" type="submit">Save Draft</button>
-            <a href="{% url 'sales-list' %}" class="btn center ghost-button">Go Back</a>
-        </div>
-    
-    </form>
-    
-    <script>
-        function printpage(divName) {
-            var printContents = document.getElementById(divName).innerHTML;
-            var originalContents = document.body.innerHTML;
-            document.body.innerHTML = printContents;
-            window.print();
-            document.body.innerHTML = originalContents;
-        }       
-        </script>
-
-{% endblock %}
+</html>
