@@ -26,7 +26,7 @@
                         <div class="input-group search" style="">
                             <input style="height: 90px; font-size: 1.8rem" class="form-control"
                                    type="number" placeholder="NUMER PRODUKTU" autofocus
-                                   name="numer_produktu" id="numer_produktu">
+                                   name="numer_produktu" id="numer_produktu" required>
                         </div>
                     </div>
                 </div>
@@ -70,6 +70,11 @@
     <script src="{% static 'js/Chart.min.js' %}"></script>
 
 <script>
+      function play() {
+        var audio = document.getElementById("audio");
+        audio.play();
+      }
+
         Chart.defaults.global.defaultFontColor = 'black';
 
         //configuration for the bar graph

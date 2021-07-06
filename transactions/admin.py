@@ -1,9 +1,7 @@
-from django.contrib import admin
-from .models import Stock, Transakcja, Rachunek
+from .models import Stock, Transakcja, Rachunek, Faktura
 
 from django.apps import apps
 from django.contrib import admin
-from django.utils.html import format_html
 
 myapp = apps.get_app_config('transactions')
 
@@ -16,7 +14,7 @@ class ListAdminMixin(object):
 
 models = myapp.get_models()
 for model in models:
-    if model == Transakcja or model == Rachunek:
+    if model in (Transakcja, Rachunek, Faktura):
         admin_class = type('AdminClass', (ListAdminMixin, admin.ModelAdmin), {})
         try:
             admin.site.register(model, admin_class)

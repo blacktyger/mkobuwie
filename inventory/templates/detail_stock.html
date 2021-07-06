@@ -3,12 +3,13 @@
 {% block content %}
 
 <body>
+<audio src="http://codeskulptor-demos.commondatastorage.googleapis.com/GalaxyInvaders/pause.wav" autoplay></audio>
     <div class="container">
-        <form method="POST">
-            {% csrf_token %}
-            {{ form.non_field_errors }}
-            <div class="row d-flex justify-content-center">
-                <div class="col-md-12 col-lg-6 align-middle">
+        <div class="row d-flex justify-content-center">
+            <div class="col-md-12 col-lg-6 align-middle">
+                <form method="POST">
+                {% csrf_token %}
+                {{ form.non_field_errors }}
                     <div style="color:#ea2088; font-style: bold; font-size: 3rem;"
                             class="mb-5 mt-3">
                         {{title}}
@@ -37,6 +38,12 @@
                                 <td>{{ form.cena }}</td>
                             </tr>
                             <tr>
+                                <td>Dodatkowe informacje o produkcie</td>
+                                <td><input type="text" name="informacje" class="form-control"
+                                        value="{{produkt.informacje}}">
+                                </td>
+                            </tr>
+                            <tr>
                                 <td scope="col">Wartość całkowita</td>
                                 <td>{{ produkt.wartosc }} PLN</td>
                             </tr>
@@ -56,19 +63,31 @@
                             {% endif %}
                         <a href="{% url 'inventory' %}" class="btn btn-primary mx-2">Wróć</a>
                     </div>
-                </div>
-                <div class="col-md-12 col-lg-4 my-5 text-center">
-                    Produkt BARCODE (EAN8)
-                    <img src="{{produkt.barcode.url}}" class="img align-self-center mr-3 mt-2" alt="barcode"
-                                 style="max-width: 250px">
-                    <div class=" mt-3">
-                        <label for="form.informacje.name">Dodatkowe informacje o produkcie</label>
-                        {{form.informacje}}
-                    </div>
-                </div>
-
+                </form>
             </div>
-        </form>
+            <div class="col-md-12 col-lg-4 my-5 mt-5 pt-5 text-center">
+                Produkt BARCODE (EAN8)
+                <img src="{{produkt.barcode.url}}" class="img align-self-center mr-3 mt-2" alt="barcode"
+                             style="max-width: 250px">
+                <div class="mt-3">
+                    {% if kody %}
+                        Dodane kody: <br />
+                    {% endif %}
+                    {% for kod in kody %}
+                        {{kod}}<br />
+                    {% endfor %}
+                </div>
+                <form method="POST" action="{% url 'dodaj-kod' pk=produkt.numer_produktu %}">
+                    {% csrf_token %}
+                    <div class="my-3 col-12 px-5">
+                        <input type="number" name="kod" autofocus required class="form-control">
+                    </div>
+                    <div class="my-3">
+                        <button type="submit" class="btn btn-primary">DODAJ NOWY KOD</button>
+                    </div>
+                </form>
+            </div>
+        </div>
     </div>
 </body>
 

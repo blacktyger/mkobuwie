@@ -51,15 +51,28 @@ class Rachunek(models.Model):
     komentarz = models.TextField(blank=True, null=True)
     wartosc = models.DecimalField(blank=True, null=True, default=0, decimal_places=2, max_digits=8)
 
-    # def save(self, *args, **kwargs):
-    #     self.wartosc = sum([item.wartosc for item in self.transakcja_set.all()])
-    #     return super().save(*args, **kwargs)
-
     def produkty(self):
         return Transakcja.objects.filter(rachunek=self)
 
     def __str__(self):
         return f"Rachunek  {self.id}"
+
+
+class Faktura(models.Model):
+    numer_faktury = models.IntegerField(blank=True, null=True)
+    imie = models.TextField(blank=True, null=True)
+    nazwisko = models.TextField(blank=True, null=True)
+    adres = models.TextField(blank=True, null=True)
+    adres2 = models.TextField(blank=True, null=True)
+    nazwa = models.TextField(blank=True, null=True)
+    nip = models.TextField(blank=True, null=True)
+    data = models.DateTimeField(default=timezone.now)
+    platnosc = models.TextField(blank=True, null=True)
+    termin = models.TextField(blank=True, null=True)
+    slownie = models.TextField(blank=True, null=True)
+    konto = models.BooleanField(default=False)
+    rachunek = models.ForeignKey(Rachunek, null=True, blank=True, on_delete=models.DO_NOTHING)
+    dodatkowe = models.TextField(blank=True, null=True)
 
 
 class Supplier(models.Model):

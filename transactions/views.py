@@ -32,10 +32,9 @@ class RachunekView(SuccessMessageMixin, View):
     def get(self, request, pk):
         context = {
             'rachunek': Rachunek.objects.get(id=pk),
-            'numer_faktury': request.GET.get('numer_faktury')
+            'dane': Faktura.objects.get(rachunek__id=pk)
             }
         return render(request, self.template_name, context)
-
 
 
 class ZamknijRachunekView(SuccessMessageMixin, View):
@@ -51,15 +50,44 @@ class ZamknijRachunekView(SuccessMessageMixin, View):
 
 
 class FakturaDaneView(SuccessMessageMixin, View):
-    model = Rachunek
-    template_name = "faktura_dane.html"
+    model = Faktura
+    template_name = "sales/faktura_dane.html"
 
     def get(self, request, pk):
         rachunek = Rachunek.objects.get(id=pk)
         context = {
             'rachunek': Rachunek.objects.get(id=pk),
             }
+        try:
+            context['nastepna_faktura'] = Faktura.objects.last().numer_faktury + 1
+        except:
+            context['nastepna_faktura'] = 1
         return render(request, self.template_name, context)
+
+    def post(self, request, *args, **kwargs):
+        data = request.POST.dict()
+        rachunek = Rachunek.objects.get(id=kwargs['pk'])
+        del data['csrfmiddlewaretoken']
+        print(data)
+        data['rachunek'] = rachunek
+        if 'konto' in data:
+            data['konto'] = True
+        else:
+            data['konto'] = False
+        fv = Faktura.objects.filter(rachunek=rachunek)
+        if fv:
+            fv.update(**data)
+        else:
+            Faktura.objects.create(**data)
+        return redirect('rachunek', pk=kwargs['pk'])
+
+
+class FakturaView(SuccessMessageMixin, ListView):
+    model = Faktura
+    template_name = "bill/bill_list.html"
+    context_object_name = 'faktury'
+    ordering = ['-data']
+    paginate_by = 50
 
 
 class TransakcjaView(SuccessMessageMixin, ListView):
@@ -72,10 +100,11 @@ class TransakcjaView(SuccessMessageMixin, ListView):
     def get_context_data(self, *args, **kwargs):
         context = super(TransakcjaView, self).get_context_data(**kwargs)
         today = datetime.date.today()
+        year, week_num, day_of_week = today.isocalendar()
         tygodniowa = today - datetime.timedelta(days=7)
 
         sprzedaz_dzienna = self.model.objects.filter(czas__gte=today)
-        sprzedaz_tygodniowa = self.model.objects.filter(czas__gte=tygodniowa)
+        sprzedaz_tygodniowa = self.model.objects.filter(czas__week=week_num)
 
         # context['produkty'] = Transakcja.objects.filter(rachunek=)
         context['sprzedaz_dzienna'] = sum([tx.wartosc for tx in sprzedaz_dzienna])
@@ -147,7 +176,7 @@ class TransakcjaDetailView(SuccessMessageMixin, View):
                 return redirect('home')
             else:
                 messages.warning(request, f"NIEUDANA SPRZEDAŻ {produkt.nazwa}")
-                messages.warning(request, f"ZLECENIE NA {data['ilosc']} SZT | STAN MAGAZYNU {produkt.ilosc }")
+                messages.warning(request, f"ZLECENIE NA {data['ilosc']} SZT | STAN MAGAZYNU {produkt.ilosc}")
                 return redirect('edit-stock', numer_produktu=produkt.numer_produktu)
         else:
             messages.warning(request, f"NIE UDAŁO SIĘ SPRZEDAĆ")

@@ -1,0 +1,197 @@
+{% extends "base.html" %} {% load widget_tweaks %} {% load static %} {% load tags %}
+
+{% block title %} INWENTARYZACJA {% endblock title %}
+
+{% block content %}
+<style type="text/css" media="print">
+@page {
+    size: auto;   /* auto is the initial value */
+    margin: 0;  /* this affects the margin in the printer settings */
+     .printTable{
+       font-size:8px;
+}
+</style>
+<style>
+    td {padding: 0px!important;}
+    table {border-spacing: 0px!important;}
+
+
+    .small-input {
+        width: 75px;
+        }
+    input[type=checkbox] {
+        transform: scale(2);
+        margin-bottom: 20px;
+    }
+    @media print {
+      .no-print{
+        display: none;
+      }
+    }
+
+
+</style>
+<div class="container">
+<!--<button class="btn" id="print" type="button">print</button>-->
+    <div class="row d-flex justify-content-center align-items-center mb-4 d-print-none">
+        <div class="col-md-12 col-lg-5" style="color: #ea2088; font-style: bold; font-size: 3rem; ">
+            INWENTARYZACJA
+        </div>
+        <div class="">
+            <button class="btn btn-warning" onclick="window.print()">WYDRUKUJ STRONĘ</button>
+        </div>
+<!--        <div class="col-md-12 col-lg-5 h2">-->
+<!--            <span class="badge badge-primary h3 mt-4">{{all_stock}}</span> produktów |-->
+<!--            <span class="badge badge-primary h3"> {{all_kategorie}} </span> kategorie-->
+<!--        </div>-->
+    </div>
+
+    <div class="row form-row d-print-none">
+        <div class="col-lg-5 col-md-12 mx-2 my-2 mb-5">
+            <form method="get">
+                <div class="input-group search" style="">
+                    {% render_field filter.form.numbers style="height: 50px; font-size: 1.5rem" class="form-control textinput" autofocus="" placeholder="Szukaj po numerze" %}
+                    <div class="input-group-append">
+                       <button type="submit" class="btn btn-primary"><i class="fas fa-search"></i> Szukaj </button>
+                    </div>
+                </div>
+            </form>
+        </div>
+
+        <div class="col-lg-5 col-md-12 mx-2 my-2 d-print-none">
+            <form method="get">
+                <div class="input-group search">
+                    {% render_field filter.form.nazwa style="height: 50px; font-size: 1.5rem" class="form-control textinput" placeholder=" Szukaj po nazwie" %}
+                    <div class="input-group-append">
+                       <button type="submit" class="btn btn-primary"> <i class="fas fa-search"></i> Szukaj </button>
+                    </div>
+                </div>
+            </form>
+        </div>
+    </div>
+
+    <div class="row d-flex justify-content-center ">
+        <div class="col-12">
+            <table class="table table-hover w-100" id="printTable">
+                <thead>
+                {% if page_obj.number == 1 %}
+                    <tr>
+                        <td colspan="4">
+                            <span class="h5">INWENTARYZACJA ROCZNA NA DZIEŃ 31 GRUDNIA {{rok}}</span>
+                        </td>
+                        <td colspan="3">
+                            <span class="h5">
+                                SKŁAD KOMISJI: <br />
+                                1) Kurzak Mirosław <br />
+                                2) Kurzak Mariola
+                            </span>
+                        </td>
+                    </tr>
+                {% endif %}
+                <tr>
+                    <td colspan="3">
+                        <span class="h5">ARKUSZ SPISU Z NATURY</span>
+                    </td>
+                    <td colspan="2"></td>
+                    <td colspan="2" class="h5 text-right">
+                        Strona {{page_obj.number}}
+                    </td>
+                </tr>
+                </thead>
+                <thead class="thead-inverse align-middle">
+                    <tr>
+                        <th>Lp.</th>
+                        <th>Symbol</th>
+                        <th>Nazwa</th>
+                        <th>Jedn. miary</th>
+                        <th>Ilość</th>
+                        <th>Cena jedn.</th>
+                        <th>Wartość</th>
+                        <th class="d-print-none">Sprawdzono</th>
+
+                    </tr>
+                </thead>
+                {% if object_list %}
+                <tbody>
+                    {% for stock in object_list %}
+                    <form method="POST" action="{% url 'inwentaryzacja-update' pk=stock.numer_produktu %}">
+                        {% csrf_token %}
+                        <tr>
+                            <td>{{ page_obj.start_index|add:forloop.counter0 }}</td>
+                            <td>{{stock.numer_produktu}}</td>
+                            <td class="align-middle">
+                                <a href="{% url 'edit-stock' stock.numer_produktu %}">{{ stock.nazwa }}</a>
+                            </td>
+                            <td class="align-middle">Sztuka</td>
+                            <td class="align-middle">
+                                <input type="number" name="ilosc" value="{{ stock.ilosc }}"
+                                       class="form-control small-input">
+                            </td>
+                            <td class="align-middle">
+                                {{ stock.cena }} zł
+                            </td>
+                            <td class="align-middle">
+                                {{ stock.wartosc }} zł
+                            </td>
+                            <td class="align-middle text-center d-print-none">
+                                <input class="mt-2" type="checkbox"
+                                     {% if stock.sprawdzono %} checked {% endif %}
+                                     name='sprawdzono' id="sprawdzono">
+                            </td>
+                            <td class="d-print-none">
+                                <button class="btn btn-sm btn-success" type="submit">Zapisz</button>
+                            </td>
+                        </tr>
+                    </form>
+                    {% endfor %}
+                    <tr>
+                        <td colspan="5" class="text-right h5">Podsumowanie strony:</td>
+                        <td colspan="2" class="text-right h5">{{page_sum}} zł</td>
+                    </tr>
+                    <tr>
+                        <td colspan="5" class="text-right h5">Wartość ogółem:</td>
+                        <td colspan="2" class="text-right h5">{{total_sum}} zł</td>
+                        <td colspan="2">
+                            <div class="d-print-none">
+                                <button class="btn btn-warning ml-3" onclick="window.print()">WYDRUKUJ STRONĘ</button>
+                            </div>
+                        </td>
+                    </tr>
+                    {% if not page_obj.has_next %}
+                    <tr>
+                        <td colspan="7">
+                            INWENTARYZACJĘ ZAKOŃCZONO NA POZYCJI {{ilosc_pozycji}}
+                        </td>
+                    </tr>
+                    {% endif %}
+                </tbody>
+                {% endif %}
+            </table>
+        </div>
+
+        <div class="align-middle d-print-none">
+            {% if is_paginated %}
+
+                {% if page_obj.has_previous %}
+                    <a class="btn btn-outline-info mb-4" href="?{% url_replace page=1 %}">Pierwsza</a>
+                    <a class="btn btn-outline-info mb-4" href="?{% url_replace page=page_obj.previous_page_number %}">Poprzednia</a>
+                {% endif %}
+
+                {% for num in page_obj.paginator.page_range %}
+                    {% if page_obj.number == num %}
+                        <a class="btn btn-info mb-4" href="?{% url_replace page=num %}">{{ num }}</a>
+                    {% elif num > page_obj.number|add:'-3' and num < page_obj.number|add:'3' %}
+                        <a class="btn btn-outline-info mb-4" href="?{% url_replace page=num %}">{{ num }}</a>
+                    {% endif %}
+                {% endfor %}
+
+                {% if page_obj.has_next %}
+                    <a class="btn btn-outline-info mb-4" href="?{% url_replace page=page_obj.next_page_number %}">Następna</a>
+                    <a class="btn btn-outline-info mb-4" href="?{% url_replace page=page_obj.paginator.num_pages %}">Poprzednia</a>
+                {% endif %}
+            {% endif %}
+        </div>
+    </div>
+</div>
+
+{% endblock content %}

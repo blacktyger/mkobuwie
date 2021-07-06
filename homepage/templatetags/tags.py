@@ -4,6 +4,11 @@ from django import template
 register = template.Library()
 
 
+@register.filter
+def page_sum(arg):
+    return sum(d.wartosc for d in arg)
+
+
 @register.simple_tag(takes_context=True)
 def url_replace(context, **kwargs):
     query = context['request'].GET.copy()

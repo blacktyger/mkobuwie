@@ -15,6 +15,8 @@ field_list = ['numer_produktu',
               'wartosc',
               'informacje',
               'barcode',
+              'numer',
+              'stock'
               ]
 
 

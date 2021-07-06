@@ -1,17 +1,23 @@
 <!DOCTYPE html>
 <html>
-    <head>
-        <style type="text/css" media="print">
+<head>
+    <style type="text/css" media="print">
         @page {
             size: auto;   /* auto is the initial value */
             margin: 0;  /* this affects the margin in the printer settings */
         }
-        </style>
 
-        <meta charset="utf-8" />
-        <title>A simple, clean, and responsive HTML invoice template</title>
+    </style>
 
-        <style>
+    <meta charset="utf-8"/>
+    <title>WYDRUK FAKTURY</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.0.2/dist/css/bootstrap.min.css" rel="stylesheet"
+          integrity="sha384-EVSTQN3/azprG1Anm3QDgpJLIm9Nao0Yz1ztcQTwFspd3yD65VohhpuuCOmLASjC" crossorigin="anonymous">
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.0.2/dist/js/bootstrap.bundle.min.js"
+            integrity="sha384-MrcW6ZMFYlzcLA8Nl+NtUVF0sA7MsXsP1UyJoMp4YLEuNSfAP+JcXn/tWtIaxVXM"
+            crossorigin="anonymous"></script>
+    <style>
+
             .invoice-box {
                 max-width: 800px;
                 margin: auto;
@@ -33,10 +39,6 @@
             .invoice-box table td {
                 padding: 5px;
                 vertical-align: top;
-            }
-
-            .invoice-box table tr td:nth-child(2) {
-                text-align: right;
             }
 
             .invoice-box table tr.top table td {
@@ -67,129 +69,151 @@
                 border-bottom: 1px solid #eee;
             }
 
-            .invoice-box table tr.item.last td {
-                border-bottom: none;
-            }
-
-            .invoice-box table tr.total td:nth-child(2) {
-                border-top: 2px solid #eee;
-                font-weight: bold;
-            }
-
-            @media only screen and (max-width: 600px) {
-                .invoice-box table tr.top table td {
-                    width: 100%;
-                    display: block;
-                    text-align: center;
-                }
-
-                .invoice-box table tr.information table td {
-                    width: 100%;
-                    display: block;
-                    text-align: center;
-                }
-            }
-
             /** RTL **/
             .invoice-box.rtl {
                 direction: rtl;
                 font-family: Tahoma, 'Helvetica Neue', 'Helvetica', Helvetica, Arial, sans-serif;
             }
 
-            .invoice-box.rtl table {
-                text-align: right;
-            }
+    </style>
+</head>
 
-            .invoice-box.rtl table tr td:nth-child(2) {
-                text-align: left;
-            }
-        </style>
-    </head>
-
-    <body>
-        <div class="invoice-box">
-            <table cellpadding="0" cellspacing="0">
-                <tr class="top">
-                    <td colspan="2">
-                        <table>
-                            <tr>
-                                <td class="title">
-                                    <h2>MK OBUWIE</h1>
-                                </td>
-
-                                <td>
-                                    Invoice #: 123<br />
-                                    Created: January 1, 2015<br />
-                                    Due: February 1, 2015
-                                </td>
-                            </tr>
-                        </table>
-                    </td>
-                </tr>
-
-                <tr class="information">
-                    <td colspan="2">
-                        <table>
-                            <tr>
-                                <td>
-                                    Sparksuite, Inc.<br />
-                                    12345 Sunny Road<br />
-                                    Sunnyville, CA 12345
-                                </td>
-
-                                <td>
-                                    Acme Corp.<br />
-                                    John Doe<br />
-                                    john@example.com
-                                </td>
-                            </tr>
-                        </table>
-                    </td>
-                </tr>
-
-                <tr class="heading">
-                    <td>Payment Method</td>
-
-                    <td>Check #</td>
-                </tr>
-
-                <tr class="details">
-                    <td>Check</td>
-
-                    <td>1000</td>
-                </tr>
-
-                <tr class="heading">
-                    <td>Item</td>
-
-                    <td>Price</td>
-                </tr>
-
-                <tr class="item">
-                    <td>Website design</td>
-
-                    <td>$300.00</td>
-                </tr>
-
-                <tr class="item">
-                    <td>Hosting (3 months)</td>
-
-                    <td>$75.00</td>
-                </tr>
-
-                <tr class="item last">
-                    <td>Domain name (1 year)</td>
-
-                    <td>$10.00</td>
-                </tr>
-
-                <tr class="total">
-                    <td></td>
-
-                    <td>Total: $385.00</td>
-                </tr>
-            </table>
+<body>
+<div class="invoice-box">
+    <div class="row">
+        <div class="col-6 text-start">
+            <p class="text-info fw-bold">
+                SPRZEDAWCA
+            </p>
+            <p>
+                O B U W I E - O D Z I E Ż<br/>
+                Mirosław Kurzak | TEL: 513 032 804 <br/>
+                43-150 Bieruń Jana Spyry 11<br/>
+                NIP: 646-185-90-77<br/>
+                {% if dane.konto %}
+                25 1050 1399 1000 0092 7087 5611 ING BANK
+                {% endif %}
+            </p>
         </div>
-    </body>
+        <div class="col-6 text-end">
+            <p class="text-info fw-bold">MIEJSCE I DATA: </p>
+            <p>BIERUŃ {{dane.data|date:'d/m/Y'}}</p>
+        </div>
+    </div>
+    <hr/>
 
+    <div class="row">
+        <div class="col-8">
+            <p class="text-info fw-bold">
+                NABYWCA
+            </p>
+            <p>
+                {{dane.nazwa.capitalize}} {{dane.imie}} {{dane.nazwisko}}<br/>
+                {{dane.adres}} {{dane.adres2}}<br/>
+                {% if dane.nip %}
+                NIP: {{dane.nip}}<br/>
+                {% endif %}
+
+            </p>
+        </div>
+        <div class="col-4 text-end">
+            <p><span class="text-danger fw-bold">FAKTURA NR.</span> <br />
+                {{dane.numer_faktury}}/{{dane.data|date:'Y'}}</p>
+        </div>
+    </div>
+    <hr/>
+    <table>
+        <tr class="heading">
+            <td>Lp.</td>
+            <td>Nazwa towaru/usługi</td>
+            <td>Miara</td>
+            <td>Ilość</td>
+            <td>Cena Jedn.</td>
+            <td class="text-end">Wartość</td>
+        </tr>
+
+        {% for item in rachunek.produkty %}
+        <tr class="">
+            <td>{{forloop.counter}}</td>
+            <td>{{item.produkt.nazwa}}</td>
+            <td>Szt.</td>
+            <td>{{item.ilosc}}</td>
+            <td>{{item.produkt.cena}} PLN</td>
+            <td class="text-end">{{item.wartosc}} PLN</td>
+        </tr>
+        {% endfor %}
+        <tr class="heading">
+            <td></td>
+            <td></td>
+            <td></td>
+            <td colspan="2" class="text-end"><span class="text-info fw-bold">RAZEM:</span></td>
+            <td class="text-end fw-bold fs-5"> {{rachunek.wartosc}} PLN</td>
+        </tr>
+    </table>
+    <table class="mt-4">
+        <tr class="heading">
+            <td>
+                SPRZEDAWCA ZWOLNIONY PODMIOTOWO Z PODATKU OD TOWARÓW I USŁUG
+            </td>
+        </tr>
+        <tr class="details">
+            <td>
+                Dostawa towarów lub świadczenie usług zwolnione na podstawie art. 113 ust. 1
+                (albo ust. 9) ustawy z dnia 11 marca 2004 r. o podatku od towarów i usług
+                (Dz.U. z 2016 r. poz 710, z późn. zm.)
+            </td>
+        </tr>
+        {% if dane.dodatkowe %}
+        <tr class="heading">
+            <td colspan="6">Dodatkowe informacje</td>
+        </tr>
+        <tr class="details">
+            <td colspan="6">{{dane.dodatkowe}}</td>
+        </tr>
+        {% endif %}
+    </table>
+
+    <table class="mt-4">
+        <tr class="heading">
+            <td>
+                DO ZAPŁATY:
+            </td>
+            <td>
+                SŁOWNIE:
+            </td>
+        </tr>
+        <tr>
+            <td>
+                <br/>
+                <span class="fs-3 mt-3">{{rachunek.wartosc}} PLN</span>
+            </td>
+            <td>
+                <br/>
+                <span class="fs-4 mt-3">{{dane.slownie}}</span>
+            </td>
+        </tr>
+    </table>
+
+    <table class="mt-4">
+        <tr>
+            <td>
+                        <span class="text-info fw-bold">
+                            SPOSÓB PŁATNOŚCI:
+                        </span> {{dane.platnosc}}
+            </td>
+            <td>
+                        <span class="text-info fw-bold">
+                            TERMIN ZAPŁATY:
+                        </span> {{dane.termin}}
+            </td>
+        </tr>
+    </table>
+    <hr/>
+    <div class="mt-3" style="height: 50px">
+
+    </div>
+    <hr/>
+    <p class="ml-3">Podpis lub pieczątka wystawcy</p>
+</div>
+</body>
 </html>

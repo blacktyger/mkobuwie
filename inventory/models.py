@@ -46,6 +46,7 @@ class Stock(models.Model):
     wartosc = models.DecimalField(max_digits=8, decimal_places=2, default=0, null=True)
     is_deleted = models.BooleanField(default=False, editable=False)
     informacje = models.TextField(blank=True, null=True)
+    sprawdzono = models.BooleanField(default=False)
     barcode = models.ImageField(upload_to='barcodes/', blank=True, null=True, default="")
 
     class Meta:
@@ -86,6 +87,14 @@ class Stock(models.Model):
         return f"[{self.kategoria.upper()}] {self.nazwa}"
 
 
+class ExtraNumer(models.Model):
+    numer = models.IntegerField(unique=True)
+    stock = models.ForeignKey(Stock, on_delete=models.CASCADE, null=True, default=1, related_name='extra_numer')
+
+    def __str__(self):
+        return str(self.numer)
+
+
 # TEST UNIT
 def add_stock():
     for x in items:
@@ -101,7 +110,6 @@ def add_stock():
                                                  cena=cena)
             print('ADDED ', create[0].numer_produktu)
         except:
-
             continue
 
     return f"Done."

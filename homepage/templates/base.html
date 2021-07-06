@@ -56,7 +56,7 @@
             <div id="dialogboxfoot"></div>
         </div>
     </div>
-    <nav id="mobile-nav" class=" hide-lg navbar navbar-expand-lg navbar-dark bg-dark">
+    <nav id="mobile-nav" class=" hide-lg navbar navbar-expand-lg navbar-dark bg-dark d-print-none">
         <a class="navbar-brand" href="{% url 'home' %}">MK Obuwie</a>
         <button class="navbar-toggler" type="button" data-toggle="collapse"
             data-target="#navbarTogglerDemo02" aria-controls="navbarTogglerDemo02"
@@ -77,6 +77,10 @@
                         <div class="dropdown-menu" aria-labelledby="dropdownMenuButton">
                             <a class="dropdown-item h4" href="{% url 'inventory' %}">Lista produktów</a>
                             <a class="dropdown-item h4" href="{% url 'new-stock' %}">Dodaj produkt</a>
+                            <a class="dropdown-item h4" href="{% url 'inwentaryzacja' %}">
+                                <span class="text-danger">INWENTARYZACJA</span>
+                            </a>
+
                         </div>
                     </div>
                 </li>
@@ -88,6 +92,9 @@
                         </a>
                         <div class="dropdown-menu" aria-labelledby="dropdownMenuButton">
                             <a class="dropdown-item h4" href="{% url 'transactions-list' %}">Historia sprzedaży</a>
+                        </div>
+                        <div class="dropdown-menu" aria-labelledby="dropdownMenuButton">
+                            <a class="dropdown-item h4" href="{% url 'faktury' %}">Wystawione faktury</a>
                         </div>
                     </div>
                 </li>
@@ -105,7 +112,7 @@
     
     {% if user.is_authenticated %}
     
-        <nav id="sidebar">
+        <nav id="sidebar" class="d-print-none">
             
             <div class="sidebar-header">
                 <a class="navbar-brand titlefont mr-4" href="{% url 'home' %}"><h3>MK Obuwie</h3></a>
@@ -120,12 +127,18 @@
                     <ul class="collapse list-unstyled" id="inventorySubmenu">
                         <li> <a class="sidebar-text sidebar-subitem sidebar-button" href="{% url 'inventory' %}">Lista produktów</a> </li>
                         <li> <a class="sidebar-text sidebar-subitem sidebar-button" href="{% url 'new-stock' %}">Dodaj nowy produkt</a> </li>
+                        <li> <a class="sidebar-text sidebar-subitem sidebar-button" href="{% url 'inwentaryzacja' %}">
+                            <span class="text-danger">INWENTARYZACJA</span>
+                        </a> </li>
+
                     </ul>
                 </li>
                 <li>
                     <a href="#saleSubmenu" data-toggle="collapse" class="dropdown-toggle sidebar-text right-arrow sidebar-button">Sprzedaż</a>
                     <ul class="collapse list-unstyled" id="saleSubmenu">
                         <li> <a class="sidebar-text sidebar-subitem sidebar-button" href="{% url 'transactions-list' %}">Historia sprzedaży</a> </li>
+                        <li> <a class="sidebar-text sidebar-subitem sidebar-button" href="{% url 'faktury' %}">Wystawione faktury</a> </li>
+                        </div>
                     </ul>
                 </li>
                 <li>
@@ -189,8 +202,7 @@
             </div>
         </div>
     </main>
-</body>
-    
+
 
     <!-- jQuery first, then Popper.js, then Bootstrap JS -->
     <script src="{% static 'bootstrap/jquery-3.3.1.slim.min.js' %}"></script>

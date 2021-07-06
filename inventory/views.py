@@ -1,3 +1,8 @@
+import datetime
+from decimal import Decimal
+
+from django.db.models import Q
+from django.http import HttpResponseRedirect
 from django.shortcuts import render, redirect, get_object_or_404
 from django.urls import reverse
 from django.views.generic import (
@@ -7,7 +12,7 @@ from django.views.generic import (
     )
 from django.contrib.messages.views import SuccessMessageMixin
 from django.contrib import messages
-from .models import Stock, KATEGORIE
+from .models import Stock, KATEGORIE, ExtraNumer
 from .forms import StockForm
 from django_filters.views import FilterView
 from .filters import StockFilter
@@ -18,14 +23,79 @@ def scanner_handler(request):
     if request.method == "GET":
         code = request.GET.get('numer_produktu')
         print(code)
-        if Stock.objects.filter(numer_produktu=code).exists():
+        if Stock.objects.filter(Q(numer_produktu=code)).exists():
             print("found id")
             messages.success(request, f"ZNALEZIONO PRODUKT {code}")
             return redirect(f'edit-stock', numer_produktu=code)
+
+        elif Stock.objects.filter(Q(extra_numer__numer=code)).exists():
+            item = Stock.objects.get(extra_numer__numer=code)
+            messages.success(request, f"ZNALEZIONO PRODUKT {code}")
+            return redirect(f'edit-stock', numer_produktu=item.numer_produktu)
+
         else:
             print("not id")
             messages.warning(request, f"NIE MOŻNA ZNALEŹĆ PRODUKTU {code}")
             return redirect('inventory')
+
+
+class AddExtraNumerView(SuccessMessageMixin, View):
+    model = ExtraNumer
+
+    def post(self, request, *args, **kwargs):
+        kod = request.POST.get('kod')
+        stock = Stock.objects.get(numer_produktu=kwargs['pk'])
+        print(kod)
+        if kod != '':
+            item = ExtraNumer.objects.filter(numer=kod)
+            if item:
+                item[0].stock = stock
+                item[0].save()
+            else:
+                ExtraNumer.objects.create(numer=kod, stock=stock)
+
+        return HttpResponseRedirect(request.META.get('HTTP_REFERER'))
+
+
+class InwentaryzacjaView(FilterView, ListView):
+    filterset_class = StockFilter
+    queryset = Stock.objects.all()
+    template_name = 'inwentaryzacja.html'
+    paginate_by = 25
+
+    def get_context_data(self, **kwargs):
+        context = super(InwentaryzacjaView, self).get_context_data(**kwargs)
+        p = context['paginator']
+        p_obj = context['page_obj']
+        context['page_sum'] = sum([item.wartosc for item in p_obj.object_list])
+        context['total_sum'] = context['page_sum']
+        context['rok'] = datetime.datetime.now().year
+        context['ilosc_pozycji'] = self.queryset.count()
+        if p_obj.number > 1:
+            prev = p_obj.previous_page_number()
+            if prev > 0:
+                for page in range(0, p_obj.number):
+                    context['total_sum'] += sum([item.wartosc for item
+                                                in p.page(prev).object_list])
+        return context
+
+
+def inwentaryzacja_update(request, pk):
+    if request.method == "POST":
+        if 'sprawdzono' in request.POST:
+            sprawdzono = True
+        else:
+            sprawdzono = False
+        ilosc = Decimal(request.POST.get('ilosc'))
+        print(pk, ':', sprawdzono, ilosc)
+
+        item = Stock.objects.filter(numer_produktu=pk)
+        if item:
+            item[0].sprawdzono = sprawdzono
+            item[0].ilosc = ilosc
+            item[0].save()
+
+        return HttpResponseRedirect(request.META.get('HTTP_REFERER'))
 
 
 class StockListView(FilterView, ListView):
@@ -91,6 +161,7 @@ class StockUpdateView(SuccessMessageMixin, UpdateView):  # updateview class to e
         context["savebtn"] = 'Aktualizuj produkt'
         context["delbtn"] = 'Usuń produkt'
         context["produkt"] = self.get_object()
+        context['kody'] = ExtraNumer.objects.filter(stock=self.get_object())
         return context
 
 

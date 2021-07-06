@@ -1,0 +1,39 @@
+{% extends "base.html" %}
+
+{% load widget_tweaks %}
+
+{% block title %} Faktury {% endblock title %}
+
+{% block content %}
+
+<div class="container">
+
+    <div class="row my-2" style="color: #ea2088; font-style: bold; font-size: 3rem;">
+        <div class="col-md-8">Wystawione Faktury</div>
+    </div>
+    <div class="row">
+        <table class="table table-hover table-stripped">
+            <thead class="thead-inverse align-middle">
+                <tr>
+                    <th>DATA</th>
+                    <th>NR</th>
+                    <th>ODBIORCA</th>
+                </tr>
+            </thead>
+            <tbody>
+                {% for faktura in faktury %}
+                <tr>
+                    <td>{{faktura.data}}</td>
+                    <td>{{faktura.numer_faktury}}</td>
+                    <td>{{faktura.imie}} {{faktura.nazwisko}}</td>
+                    <td><a href="{% url 'rachunek' pk=faktura.rachunek.id %}">
+                        Wyświetl Fakturę
+                    </a> </td>
+                </tr>
+                {% endfor %}
+            </tbody>
+        </table>
+    </div>
+</div>
+
+{% endblock content %}

@@ -40,9 +40,9 @@ INSTALLED_APPS = [
     'crispy_forms',  # uses 'django-crispy-forms' app
     'login_required',  # uses 'django-login-required-middleware' app
 
-    'homepage.apps.HomepageConfig',
-    'inventory.apps.InventoryConfig',
-    'transactions.apps.TransactionsConfig',
+    'homepage',
+    'inventory',
+    'transactions',
     ]
 
 MIDDLEWARE = [
@@ -84,7 +84,7 @@ WSGI_APPLICATION = 'core.wsgi.application'
 DATABASES = {
     'default': {
         'ENGINE': 'django.db.backends.sqlite3',
-        'NAME': os.path.join(BASE_DIR, 'db.sqlite3'),
+        'NAME': os.path.join(BASE_DIR, 'db_old.sqlite3'),
         }
     }
 

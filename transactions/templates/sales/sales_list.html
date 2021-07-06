@@ -36,7 +36,8 @@
                 <tr style="background-color: #6495ED">
                     <td>{{rachunek.czas}}</td>
                     <td colspan="4" class="text-right">
-                        <a href="{% url 'faktura-dane' pk=rachunek.id %}" class="ml-4 btn btn-dark btn-sm">
+                        <a href="{% url 'faktura-dane' pk=rachunek.id %}"
+                           class="ml-4 btn btn-dark btn-sm" target="_blank">
                             <i class="ml-2 fas fa-print"></i>
                             WYSTAW FAKTURĘ
                         </a>

@@ -7,6 +7,80 @@
 
 
 {% block content %}
+<style>
+                input[type=checkbox] {
+        transform: scale(2.5);
+    }
+</style>
+<div class="h3 text-dark">DANE DO FAKTURY</div>
+<form method="POST">
+    <div class="row">
+        {% csrf_token %}
+        <div class="col-5 mt-5">
+            <div class="text-center h4 text-dark">
+                DANE KUPUJĄCEGO
+            </div>
+            <div class="input-group mb-3">
+                <span class="input-group-text" id="basic-addon1">NUMER FAKTURY</span>
+                <input type="text" class="form-control" name="numer_faktury"
+                value="{{nastepna_faktura}}">
+            </div>
+            <div class="input-group mb-3">
+                <span class="input-group-text" id="basic-addon1">Nazwa Firmy</span>
+                <input type="text" class="form-control" name="nazwa">
+            </div>
+            <div class="input-group mb-3">
+                <span class="input-group-text" id="basic-addon1">Imię</span>
+                <input type="text" class="form-control" name="imie">
+            </div>
+            <div class="input-group mb-3">
+                <span class="input-group-text" id="basic-addon1">Nazwisko</span>
+                <input type="text" class="form-control" name="nazwisko">
+            </div>
+            <div class="input-group mb-3">
+                <span class="input-group-text" id="basic-addon1">Adres</span>
+                <input type="text" class="form-control" name="adres">
+            </div>
+            <div class="input-group mb-3">
+                <span class="input-group-text" id="basic-addon1">Adres</span>
+                <input type="text" class="form-control" name="adres2">
+            </div>
+            <div class="input-group mb-3">
+                <span class="input-group-text" id="basic-addon1">NIP</span>
+                <input type="text" class="form-control" name="nip">
+            </div>
+            <div class="input-group">
+                <span class="input-group-text">Dodatkowe</span>
+                <textarea class="form-control" aria-label="With textarea" name="dodatkowe"></textarea>
+            </div>
+        </div>
 
+        <div class="col-5 mt-5">
+            <div class="text-center h4 text-dark">
+                DANE SPRZEDAJĄCEGO
+            </div>
+            <div class="input-group mb-3">
+                <span class="input-group-text" id="basic-addon1">Termin płatności</span>
+                <input type="text" class="form-control" name="termin">
+            </div>
+            <div class="input-group mb-3">
+                <span class="input-group-text" id="basic-addon1">Sposób płatności</span>
+                <input type="text" class="form-control" name="platnosc">
+            </div>
+            <div class="input-group mb-3">
+                <span class="input-group-text" id="basic-addon1">Kwota słownie ({{rachunek.wartosc}})</span>
+                <input type="text" class="form-control" name="slownie">
+            </div>
+            <div class="input-group mb-3">
+             <div class="form-check form-switch ml-3">
+                <input class="form-check-input" type="checkbox" id="konto" name="konto">
+                <label class="form-check-label ml-2" for="konto">Wydrukować numer konta?</label>
+                </div>
+            </div>
+        </div>
+    </div>
+                <button type="submit" class="btn btn-success w-100 mt-4">Zapisz</button>
+
+</form>
 
 {% endblock %}

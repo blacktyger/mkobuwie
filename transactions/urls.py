@@ -16,6 +16,7 @@ urlpatterns = [
 
     path('new/<pk>', views.TransakcjaDetailView.as_view(), name='transaction-new'),
     path('list', views.TransakcjaView.as_view(), name='transactions-list'),
+    path('faktury', views.FakturaView.as_view(), name='faktury'),
     path('rachunek/<pk>', views.RachunekView.as_view(), name='rachunek'),
     path('faktura/<pk>', views.FakturaDaneView.as_view(), name='faktura-dane'),
     path('zamknij/<pk>', views.ZamknijRachunekView.as_view(), name='zamknij-rachunek'),

@@ -3,7 +3,9 @@
 {% block title %} {{title}} {% endblock title %}
 
 {% block content %}
-    
+<!--<audio src="http://codeskulptor-demos.commondatastorage.googleapis.com/GalaxyInvaders/pause.wav" autoplay></audio>-->
+
+
     <div class="container">
         <form method="POST">
                     {% csrf_token %}
@@ -53,5 +55,12 @@
             </div>
         </form>
     </div>
+<script>
+function playSound(url) {
+  const audio = new Audio(url);
+  audio.play();
+}
 
+playSound()
+</script>
 {% endblock content %}
