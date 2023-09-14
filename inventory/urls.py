@@ -12,5 +12,6 @@ urlpatterns = [
     path('csv/', views.StockListViewCSV, name='csv'),
     path('stock/<numer_produktu>/edit', views.StockUpdateView.as_view(), name='edit-stock'),
     path('stock/<numer_produktu>/delete', views.StockDeleteView.as_view(), name='delete-stock'),
-    path('scanner', views.scanner_handler, name='scanner')
+    path('scanner', views.scanner_handler, name='scanner'),
+    path('wyczysc_sprawdzono', views.wyczysc_sprawdzono, name='wyczysc-sprawdzono')
     ]

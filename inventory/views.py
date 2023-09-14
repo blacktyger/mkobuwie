@@ -71,6 +71,7 @@ class InwentaryzacjaView(FilterView, ListView):
         context['total_sum'] = context['page_sum']
         context['rok'] = datetime.datetime.now().year
         context['ilosc_pozycji'] = self.queryset.count()
+
         if p_obj.number > 1:
             prev = p_obj.previous_page_number()
             if prev > 0:
@@ -94,6 +95,16 @@ def inwentaryzacja_update(request, pk):
             item[0].sprawdzono = sprawdzono
             item[0].ilosc = ilosc
             item[0].save()
+
+        return HttpResponseRedirect(request.META.get('HTTP_REFERER'))
+
+
+def wyczysc_sprawdzono(request):
+    if request.method == 'GET':
+        for item in Stock.objects.all():
+            item.sprawdzono = False
+            item.save()
+        print(f"zmieniono {Stock.objects.all().count()} pozycji")
 
         return HttpResponseRedirect(request.META.get('HTTP_REFERER'))
 

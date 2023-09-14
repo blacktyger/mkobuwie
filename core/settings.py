@@ -41,6 +41,7 @@ INSTALLED_APPS = [
     'login_required',  # uses 'django-login-required-middleware' app
 
     'homepage',
+    'dbbackup',
     'inventory',
     'transactions',
     ]
@@ -84,9 +85,12 @@ WSGI_APPLICATION = 'core.wsgi.application'
 DATABASES = {
     'default': {
         'ENGINE': 'django.db.backends.sqlite3',
-        'NAME': os.path.join(BASE_DIR, 'db_old.sqlite3'),
+        'NAME': os.path.join(BASE_DIR, 'debe.sqlite3'),
         }
     }
+
+DBBACKUP_STORAGE = 'django.core.files.storage.FileSystemStorage'
+DBBACKUP_STORAGE_OPTIONS = {'location': 'C:\\Users\\patry\\Dropbox\\PC\\Videos'}
 
 # Password validation
 # https://docs.djangoproject.com/en/3.0/ref/settings/#auth-password-validators
@@ -109,7 +113,7 @@ AUTH_PASSWORD_VALIDATORS = [
 # Internationalization
 # https://docs.djangoproject.com/en/3.0/topics/i18n/
 
-LANGUAGE_CODE = 'pl-pl'
+# LANGUAGE_CODE = 'pl-pl'
 
 TIME_ZONE = 'UTC'
 
